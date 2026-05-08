@@ -1,13 +1,13 @@
 # ==============================================================================
-# [Script]: 4.1.6.1_plot_3d_scatter_with_PCA_template.R
+# [Script]: 4.1.4.1_plot_3d_scatter_with_PCA_template.R
 # [Method]: 3D PCA Scatter Plot
-# [Step]: 4.1.6.1_plot_3d_scatter_with_PCA
+# [Step]: 4.1.4.1_plot_3d_scatter_with_PCA
 #
 # [Function]:
 # Reads intersection signal data and visualizes their relationships in a 3D scatter plot.
 #
 # [Usage]: 
-#   Rscript 4.1.6.1_plot_3d_scatter_with_PCA_template.R \
+#   Rscript 4.1.4.1_plot_3d_scatter_with_PCA_template.R \
 #     --input_dir <path> \
 #     --cluster_file <path> \
 #     --out_dir <path>
