@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.7.1.1_GWAS_preprocessing_template.R
+# [Script]: 7.8.1.1_GWAS_preprocessing_template.R
 # [Method]: SuSiE Colocalization Preprocessing
 # [Step]: Preprocess GWAS/pQTL data for SuSiE coloc
 # 

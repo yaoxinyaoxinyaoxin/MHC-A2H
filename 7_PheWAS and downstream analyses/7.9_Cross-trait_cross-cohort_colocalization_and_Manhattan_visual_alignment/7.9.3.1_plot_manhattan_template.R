@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.8.3.1_plot_manhattan_template.R
+# [Script]: 7.9.3.1_plot_manhattan_template.R
 # [Method]: GWAS/PheWAS Manhattan Plot
 # [Step]: Visual Alignment of Manhattan Plots
 # 

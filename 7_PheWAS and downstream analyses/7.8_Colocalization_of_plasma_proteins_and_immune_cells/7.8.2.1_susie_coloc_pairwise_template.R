@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.7.2.1_susie_coloc_pairwise_template.R
+# [Script]: 7.8.2.1_susie_coloc_pairwise_template.R
 # [Method]: SuSiE Colocalization Analysis
 # [Step]: Run pairwise SuSiE coloc
 # 

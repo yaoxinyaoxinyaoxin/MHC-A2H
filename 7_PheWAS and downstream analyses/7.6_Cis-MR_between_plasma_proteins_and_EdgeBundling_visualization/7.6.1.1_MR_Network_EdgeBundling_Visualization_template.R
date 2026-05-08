@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.9.1.1_MR_Network_EdgeBundling_Visualization_template.R
+# [Script]: 7.6.1.1_MR_Network_EdgeBundling_Visualization_template.R
 # [Method]: Network Analysis & Hierarchical Edge Bundling
 # [Step]: Cis-MR between plasma proteins (Validation & Visualization)
 # 

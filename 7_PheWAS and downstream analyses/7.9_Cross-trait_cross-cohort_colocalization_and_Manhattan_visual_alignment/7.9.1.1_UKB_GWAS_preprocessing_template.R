@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.8.1.2_FinnGen_GWAS_preprocessing_template.R
+# [Script]: 7.9.1.1_UKB_GWAS_preprocessing_template.R
 # [Method]: SuSiE Colocalization Preprocessing
 # [Step]: Preprocess GWAS/pQTL data for SuSiE coloc
 # 
@@ -60,14 +60,20 @@ setDTthreads(1) # Worker  1 ,  parallel
 # ------------------------------------------------------------------------------
 base_dir <- "./"
 
-finngen_gwas_dir <- "./"
-finngen_manifest_path <- "./"
+prot_gwas_dir <- "./"
+disease_gwas_dir <- "./"
+csv_834_path <- "./"
+
+hub_file <- "./"
+gene_list_file <- "./"
+sig_file <- "./"
+disease_pheno_csv_path <- "./"
 
 # LD 
 ld_snp_info <- "./"
 
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-out_dir <- file.path(base_dir, paste0("2_Preprocessed_FinnGen_SuSiE_", timestamp))
+out_dir <- file.path(base_dir, paste0("Preprocessed_SuSiE_", timestamp))
 results_dir <- file.path(out_dir, "results")
 logs_dir <- file.path(out_dir, "logs")
 readme_dir <- file.path(out_dir, "readme")
@@ -87,38 +93,112 @@ log_msg <- function(msg) {
 log_msg("Script started.")
 
 # ------------------------------------------------------------------------------
-#  2:  Manifest  (Gather Targets & Parse Manifest)
+#  2:  (Gather Target Datasets)
 # ------------------------------------------------------------------------------
-log_msg("Step 2: Gathering FinnGen GWAS datasets and matching manifest...")
+log_msg("Step 2: Gathering target datasets (Proteins and Diseases)...")
 
-# 2.1  .gz 
-gwas_files <- list.files(finngen_gwas_dir, pattern = "\\.gz$", full.names = TRUE)
-log_msg(sprintf("Found %d .gz files in the target directory.", length(gwas_files)))
+# --- 2.1  ---
+hub_df <- fread(hub_file)
+hub_genes <- hub_df[Type == "Hub", Gene]
+gene_list <- fread(gene_list_file)
+hub_phenotypes <- gene_list[gene %in% hub_genes, Phenotype]
+sig_df <- fread(sig_file)
+hub_gcst_map <- unique(sig_df[Phenotype %in% hub_phenotypes, .(GCST, Phenotype)])
 
-#  phenocode
-# : finngen_R12_SLE_FG.gz
-file_names <- basename(gwas_files)
-phenocodes <- gsub("^finngen_R12_", "", file_names)
-phenocodes <- gsub("\\.gz$", "", phenocodes)
-
-all_targets <- data.table(
-  FilePath = gwas_files,
-  Phenocode = phenocodes
+manual_gcst_prot <- data.table(
+  GCST = c("GCST90468120", "GCST90468136", "GCST90468138", "GCST90468112", "GCST90468147", 
+           "GCST90468082", "GCST90468090", "GCST90468092", "GCST90468068", "GCST90468100", 
+           "GCST90468095", "GCST90468098", "GCST90468076"),
+  Phenotype = c("Coeliac disease", "Hyperthyroidism", "Hypothyroidism", "Asthma", "Psoriasis",
+                "Lymphocyte count", "Monocyte count", "Neutrophill count", "Eosinophill count",
+                "Reticulocyte count", "Platelet count", "Red blood cell erythrocyte count",
+                "High light scatter reticulocyte count")
 )
+target_proteins <- rbind(hub_gcst_map, manual_gcst_prot)
+target_proteins <- unique(target_proteins, by = "GCST")
+target_proteins[, Source := "Proteins/Traits"]
+target_proteins[, FilePath := file.path(prot_gwas_dir, paste0(GCST, ".tsv.gz"))]
+target_proteins[, Disease_Name := Phenotype]
 
-# 2.2  Manifest 
-manifest_df <- fread(finngen_manifest_path)
+# --- 2.2  ---
+disease_gcst_list <- c(
+  "GCST90473161", "GCST90473888", "GCST90473152", "GCST90473157", "GCST90473169", 
+  "GCST90473148", "GCST90473145", "GCST90474048", "GCST90474052", "GCST90473937", 
+  "GCST90474055", "GCST90473712", "GCST90473130", "GCST90474159", "GCST90473113", 
+  "GCST90473962", "GCST90473137", "GCST90473935", "GCST90473050", "GCST90473036", 
+  "GCST90473953", "GCST90473167", "GCST90473375", "GCST90473599", "GCST90473115", 
+  "GCST90473180", "GCST90473806", "GCST90473182", "GCST90473804", "GCST90473984", 
+  "GCST90473921", "GCST90473701", "GCST90473235", "GCST90473430", "GCST90474176", 
+  "GCST90473961", "GCST90474170",
+  "GCST90474461", "GCST90474466", "GCST90474501", "GCST90474521", "GCST90474526", 
+  "GCST90474531", "GCST90474536", "GCST90474541", "GCST90474576", "GCST90474601"
+)
+target_diseases <- data.table(GCST = disease_gcst_list, Phenotype = NA_character_)
 
-#  all_targets 
-all_targets <- merge(all_targets, manifest_df[, .(phenocode, phenotype, num_cases, num_controls, ``)],
-                     by.x = "Phenocode", by.y = "phenocode", all.x = TRUE)
+if (file.exists(disease_pheno_csv_path)) {
+  pheno_df <- fread(disease_pheno_csv_path, select = c("GCST", "Disease_Name"))
+  pheno_df <- unique(pheno_df)
+  target_diseases <- merge(target_diseases, pheno_df, by = "GCST", all.x = TRUE)
+} else {
+  target_diseases[, Disease_Name := GCST]
+}
+target_diseases[, Phenotype := Disease_Name]
+target_diseases[, Source := "UKB_Diseases"]
+target_diseases[, FilePath := file.path(disease_gwas_dir, paste0(GCST, "_hg37_converted.tsv.gz"))] # 
 
-setnames(all_targets, 
-         old = c("phenotype", "num_cases", "num_controls", ""), 
-         new = c("Phenotype", "N_case", "N_control", "N_total"))
+# （ _hg37_converted.tsv.gz  .tsv.gz）
+target_diseases$FilePath <- sapply(target_diseases$GCST, function(x) {
+  p1 <- file.path(disease_gwas_dir, paste0(x, "_hg37_converted.tsv.gz"))
+  p2 <- file.path(disease_gwas_dir, paste0(x, ".tsv.gz"))
+  if (file.exists(p1)) return(p1)
+  if (file.exists(p2)) return(p2)
+  return(p2) #  .tsv.gz
+})
 
-#  GCST  Phenocode 
-all_targets[, GCST := Phenocode]
+# ---  ---
+all_targets <- rbind(target_proteins, target_diseases, fill = TRUE)
+all_targets <- all_targets[file.exists(FilePath)]
+log_msg(sprintf("Total target datasets found on disk: %d", nrow(all_targets)))
+
+# ------------------------------------------------------------------------------
+#  3:  834_UKB_.csv  (Parse Sample Size)
+# ------------------------------------------------------------------------------
+log_msg("Step 3: Parsing sample sizes from 834 UKB CSV...")
+csv_834 <- read_csv(csv_834_path, show_col_types = FALSE)
+setDT(csv_834)
+csv_834 <- csv_834[!is.na(`STUDY ACCESSION`)]
+
+#  cases  controls
+# : "91,830 Non-Finnish European ancestry cases, 366,610 Non-Finnish European ancestry controls"
+parse_sample_size <- function(size_str) {
+  if (is.na(size_str)) return(list(case = NA_integer_, control = NA_integer_, total = NA_integer_))
+  
+  case_match <- str_match(size_str, "([0-9,]+)\\s+[^c]*cases")
+  control_match <- str_match(size_str, "([0-9,]+)\\s+[^c]*controls")
+  
+  case_val <- ifelse(!is.na(case_match[,2]), as.integer(gsub(",", "", case_match[,2])), NA_integer_)
+  control_val <- ifelse(!is.na(control_match[,2]), as.integer(gsub(",", "", control_match[,2])), NA_integer_)
+  
+  #  cases/controls,  (e.g., "400,000 Non-Finnish European ancestry individuals")
+  total_val <- case_val + control_val
+  if (is.na(total_val)) {
+    ind_match <- str_match(size_str, "([0-9,]+)\\s+[^i]*individuals")
+    if (!is.na(ind_match[,2])) {
+      total_val <- as.integer(gsub(",", "", ind_match[,2]))
+    }
+  }
+  
+  return(list(case = case_val, control = control_val, total = total_val))
+}
+
+size_info <- rbindlist(lapply(csv_834$`INITIAL SAMPLE SIZE`, parse_sample_size))
+csv_834 <- cbind(csv_834, size_info)
+
+#  all_targets
+all_targets <- merge(all_targets, csv_834[, .(`STUDY ACCESSION`, case, control, total)], 
+                     by.x = "GCST", by.y = "STUDY ACCESSION", all.x = TRUE)
+
+setnames(all_targets, c("case", "control", "total"), c("N_case", "N_control", "N_total"))
 
 input_list_file <- file.path(readme_dir, paste0("Input_Datasets_List_", timestamp, ".csv"))
 fwrite(all_targets, input_list_file)
@@ -130,9 +210,9 @@ log_msg(paste("Saved input dataset list to:", input_list_file))
 # ==================================================================
 
 # ------------------------------------------------------------------------------
-#  3:  (Parallel Preprocessing & Alignment)
+#  4:  (Parallel Preprocessing & Alignment)
 # ------------------------------------------------------------------------------
-log_msg("Step 3: Loading UKB LD Reference Panel...")
+log_msg("Step 4: Loading UKB LD Reference Panel...")
 ld_dt <- fread(ld_snp_info, sep = "\t")
 setnames(ld_dt, old = c("SNP_ID","Chromosome","Position_BP","Allele1","Allele2","Allele_Direction"), 
              new = c("rsid","chr","pos","ld_a1","ld_a2","ld_dir"))
@@ -157,23 +237,23 @@ process_gwas_worker <- function(i, all_targets, ld_dt, results_dir) {
   
   tryCatch({
     #  awk : MAF > 0.05
-    #  FinnGen 
-    # FinnGen : #chrom, pos, ref, alt, rsids, nearest_genes, pval, mlogp, beta, sebeta, af_alt
     awk_script <- "
     BEGIN { FS=\"\\t\"; OFS=\"\\t\" }
     NR==1 {
       for(i=1; i<=NF; i++) {
-        if($i==\"#chrom\") chr=i;
-        if($i==\"pos\") pos=i;
-        if($i==\"alt\") ea=i;
-        if($i==\"ref\") oa=i;
+        if($i==\"chromosome\") chr=i;
+        if($i==\"base_pair_location\") pos=i;
+        if($i==\"effect_allele\") ea=i;
+        if($i==\"other_allele\") oa=i;
         if($i==\"beta\") beta=i;
-        if($i==\"sebeta\") se=i;
-        if($i==\"pval\") pval=i;
-        if($i==\"af_alt\") eaf=i;
-        if($i==\"rsids\") rsid=i;
+        if($i==\"standard_error\") se=i;
+        if($i==\"p_value\") pval=i;
+        if($i==\"effect_allele_frequency\" || $i==\"eaf\") eaf=i;
+        if($i==\"rsid\" || $i==\"rs_id\") rsid=i;
+        if($i==\"variant_id\") varid=i;
+        if($i==\"n\") n=i;
       }
-      print \"rsid\", \"chr\", \"pos\", \"ea\", \"oa\", \"beta\", \"se\", \"pval\", \"eaf\"
+      print \"rsid\", \"chr\", \"pos\", \"ea\", \"oa\", \"beta\", \"se\", \"pval\", \"eaf\", \"n\"
     }
     NR>1 {
       chr_val = (chr != \"\") ? $chr : \"\";
@@ -185,15 +265,15 @@ process_gwas_worker <- function(i, all_targets, ld_dt, results_dir) {
       pval_val = (pval != \"\") ? $pval : \"\";
       eaf_val = (eaf != \"\") ? $eaf : \"\";
       rsid_val = (rsid != \"\") ? $rsid : \"\";
+      varid_val = (varid != \"\") ? $varid : \"\";
+      n_val = (n != \"\") ? $n : \"\";
       
       my_eaf = eaf_val;
       if (my_eaf != \"\" && my_eaf != \"NA\") {
         my_maf = (my_eaf > 0.5) ? (1 - my_eaf) : my_eaf;
         if (my_maf > 0.05) {
-          #  rsid , 
-          split(rsid_val, arr, \",\")
-          my_rsid = (arr[1] != \"\" && arr[1] != \"NA\") ? arr[1] : chr_val\":\"pos_val
-          print my_rsid, chr_val, pos_val, ea_val, oa_val, beta_val, se_val, pval_val, eaf_val
+          my_rsid = (rsid_val != \"\" && rsid_val != \"NA\") ? rsid_val : ((varid_val != \"\" && varid_val != \"NA\") ? varid_val : chr_val\":\"pos_val)
+          print my_rsid, chr_val, pos_val, ea_val, oa_val, beta_val, se_val, pval_val, eaf_val, n_val
         }
       }
     }
@@ -207,10 +287,16 @@ process_gwas_worker <- function(i, all_targets, ld_dt, results_dir) {
       stop("No SNPs remained after MAF > 0.05 filtering or reading failed.")
     }
     
+    #  N_total,  n 
     if (is.na(n_total)) {
-        dat[, n_final := 487448] # , 
+      if (!all(is.na(dat$n))) {
+        dat[, n_final := as.numeric(n)]
+      } else {
+        # ,  (UKB 394642  54219)
+        dat[, n_final := 394642] # 
+      }
     } else {
-        dat[, n_final := as.numeric(n_total)]
+      dat[, n_final := as.numeric(n_total)]
     }
     
     dat[, ea := toupper(ea)]
@@ -286,22 +372,20 @@ print(res_dt)
 #  Readme
 # ==============================================================================
 readme_text <- sprintf("
-# FinnGen GWAS Preprocessing for SuSiE/coloc
+# GWAS Preprocessing for SuSiE/coloc
 # : %s
 
 ##  (Description)
- FinnGen GWAS , （ SuSiE, coloc）. 
+ GWAS , （ SuSiE, coloc）. 
 （ LD ）. 
 
 ## 
-1.  FinnGen GRCh37  .gz . 
-2.  phenocode  Manifest CSV . 
-3.  awk ,  MAF > 0.05 , . 
-4.  RSID  UKB EUR LD . 
-5. : 
+1.  awk ,  MAF > 0.05 , . 
+2.  RSID  UKB EUR LD . 
+3. : 
    - Consistent (Source EA == LD A1): Beta  EAF . 
    - Flipped (Source EA == LD A2): Beta , EAF  (1 - EAF). 
-6.  A1  A2  LD  ld_a1  ld_a2. 
+4.  A1  A2  LD  ld_a1  ld_a2. 
 
 ## 
 - : %d

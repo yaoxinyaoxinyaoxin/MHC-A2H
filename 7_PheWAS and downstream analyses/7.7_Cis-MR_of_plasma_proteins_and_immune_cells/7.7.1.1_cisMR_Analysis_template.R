@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # ==============================================================================
-# [Script]: 7.6.2.1_cisMR_Analysis_template.R
+# [Script]: 7.7.1.1_cisMR_Analysis_template.R
 # [Method]: cis-MR Analysis (Two-Sample MR)
 # [Step]: Perform Mendelian Randomization using cis-IVs against Immune Cells
 # 
