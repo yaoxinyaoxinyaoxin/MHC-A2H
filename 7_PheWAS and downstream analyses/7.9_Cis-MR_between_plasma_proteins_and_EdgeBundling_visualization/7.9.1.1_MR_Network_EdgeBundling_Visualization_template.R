@@ -77,7 +77,7 @@ sink(file.path(logs_dir, "session_info.txt"))
 print(sessionInfo())
 sink()
 
-# NPG (Nature Publishing Group) Style Colors
+# Standard Style Colors
 color_pos <- "#E64B35FF" # Muted Red
 color_neg <- "#4DBBD5FF" # Muted Blue
 

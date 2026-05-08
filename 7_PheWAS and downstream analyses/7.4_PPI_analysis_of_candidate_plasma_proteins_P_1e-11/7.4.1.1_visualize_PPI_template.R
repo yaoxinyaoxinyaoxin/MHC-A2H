@@ -542,7 +542,7 @@ readme_content <- c(
   "# PPI Network Visualization Analysis Report / PPI",
   "",
   paste("- **Date / :**", Sys.Date),
-  "- **Author / :** AI Assistant",
+  "- **Author / :** Yaoxin",
   paste("- **Input File / :**", INPUT_FILE),
   paste("- **Output Directory / :**", OUTPUT_BASE),
   "",

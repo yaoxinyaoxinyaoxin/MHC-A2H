@@ -36,7 +36,7 @@
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Script Name: visualize_integrated_PPI.R
-# Author: AI Assistant
+# Author: Yaoxin
 # Date: 2026-02-12
 # Version: 2.0
 # Description: 

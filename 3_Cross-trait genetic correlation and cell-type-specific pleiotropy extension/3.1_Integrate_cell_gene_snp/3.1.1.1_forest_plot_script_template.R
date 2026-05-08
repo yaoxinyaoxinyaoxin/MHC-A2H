@@ -16,7 +16,7 @@
 # ==============================================================================
 
 # R script for generating Forest Plot with Table (Hierarchical / )
-# Author: AI Assistant
+# Author: Yaoxin
 # Date: 2026-02-14
 # Version: 4.6
 # Description: 
@@ -1942,7 +1942,7 @@ tryCatch({
   p_counts <- ggplot(stats_counts_long, aes(x = outcome, y = Count, fill = Type)) +
     geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.5) +
     geom_text(aes(label = Count), position = position_dodge(width = 0.9), vjust = -0.5, size = 3, fontface = "bold") +
-    theme_classic(base_size = 14) + # Journal style theme
+    theme_classic(base_size = 14) + # Standard style theme
     labs(x = NULL, y = "Count") + # Remove Title and X-axis label (Outcome)
     scale_y_continuous(expand = expansion(mult = c(0, 0.1))) + # Reduce gap at bottom
     theme(

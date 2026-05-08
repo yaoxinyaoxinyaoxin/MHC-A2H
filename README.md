@@ -1,6 +1,6 @@
 # Code Availability for: "A shared MHC immunogenetic signal links aging, rheumatoid arthritis, and herpes zoster through high inflammatory burden–compensatory immune tolerance dysregulation"
 
-This repository contains the complete, standardized analytical pipeline utilized to generate the results presented in the manuscript. By integrating large-scale genome-wide association studies (GWAS) with cell-resolved single-cell expression quantitative trait loci (sc-eQTLs) and high-resolution plasma protein QTLs (pQTLs), this framework dissects the shared genetic and molecular architecture linking aging, rheumatoid arthritis (RA), and herpes zoster (HZ).
+This repository contains the complete, standardized analytical pipeline utilized to generate the results presented in this study. By integrating large-scale genome-wide association studies (GWAS) with cell-resolved single-cell expression quantitative trait loci (sc-eQTLs) and high-resolution plasma protein QTLs (pQTLs), this framework dissects the shared genetic and molecular architecture linking aging, rheumatoid arthritis (RA), and herpes zoster (HZ).
 
 ## Overview of Methodology
 
@@ -14,7 +14,7 @@ The analytical pipeline is designed to overcome the extreme linkage disequilibri
 
 ## Repository Structure
 
-The directory structure strictly mirrors the sequential workflow detailed in the Methods section of the manuscript:
+The directory structure strictly mirrors the sequential workflow detailed in the Methods section:
 
 * **`1_Local Analysis of [co]Variant Associations (LAVA)`**
   Scripts for evaluating local genetic correlations across the MHC region.

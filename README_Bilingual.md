@@ -2,7 +2,7 @@
 
 *For the English version, please refer to [README.md](./README.md).*
 
-本项目包含了用于生成论文 **《A shared MHC immunogenetic signal links aging, rheumatoid arthritis, and herpes zoster through high inflammatory burden–compensatory immune tolerance dysregulation》** 结果的完整标准化分析流水线。
+本项目包含了用于生成研究 **《A shared MHC immunogenetic signal links aging, rheumatoid arthritis, and herpes zoster through high inflammatory burden–compensatory immune tolerance dysregulation》** 结果的完整标准化分析流水线。
 
 通过整合大规模全基因组关联研究 (GWAS)、单细胞表达数量性状基因座 (sc-eQTL) 以及高分辨率血浆蛋白 QTL (pQTL) 数据，本研究系统性地揭示了衰老、类风湿关节炎（RA）和带状疱疹（HZ）之间共享的遗传与分子架构。
 

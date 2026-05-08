@@ -779,62 +779,12 @@ readme_content <- paste0(
   "=================================================================\n"
 )
 
-paper_ready_readme <- paste0(
-  "# NicheNet Plasma Protein Internal Communication Analysis\n\n",
-  "## 1. Script Purpose | \n\n",
-  "--,  NicheNet  OmniPath API  stimulation / inhibition , . \n\n",
-  "This script extracts ligand-receptor-target communication axes confined within the input plasma protein gene list. It filters prior interactions using the NicheNet knowledge base together with stimulation / inhibition annotations from the OmniPath API, and outputs a publication-ready concentric network plot and summary statistics.\n\n",
-  "## 2. Key Functionality | \n\n",
-  "- , -. \n",
-  "-  NicheNet -,  Ligand-Receptor-Target . \n",
-  "-  OmniPath API  stimulation  inhibition . \n",
-  "-  4  1  Network_Concentric . \n",
-  "-  2_Internal_Ligand_Receptor_Target.csv . \n\n",
-  "## 3. Methods Text for Manuscript | \n\n",
-  "### \n\n",
-  " NicheNet . , -； NicheNet -, --. ,  OmniPath  API,  stimulation  inhibition . , , 、, , . \n\n",
-  "### English\n\n",
-  "We performed an internal cell-cell communication analysis for candidate plasma proteins using the NicheNet prior knowledge network. Ligand-receptor interactions were first restricted to molecules present in the input protein list, after which full ligand-receptor-target chains were reconstructed using the NicheNet ligand-target regulatory matrix. To enhance biological confidence, we further queried the OmniPath API and retained only receptor interactions annotated as stimulation or inhibition. The resulting signaling architecture was visualized as a concentric network, in which ligands, receptors, and target genes were placed on separate rings, node size represented relative cumulative signaling strength, and edge width encoded aggregated regulatory strength.\n\n",
-  "## 4. Results Text for Manuscript | \n\n",
-  "### \n\n",
-  " ", count_input_genes, " ,  ", count_internal_lr, "  OmniPath -,  ", count_internal_lrt, " --.  ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_ligand_count), " 、", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_receptor_count), "  ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_target_count), " . Network_Concentric  2_Internal_Ligand_Receptor_Target.csv ,  ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_lr_edge_count), "  Ligand-Receptor  ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_rt_edge_count), "  Receptor-Target , . \n\n",
-  "### English\n\n",
-  "Among ", count_input_genes, " input plasma proteins, we identified ", count_internal_lr, " internal ligand-receptor interactions supported by OmniPath annotations and further resolved ", count_internal_lrt, " complete internal ligand-receptor-target chains. The resulting network involved ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_ligand_count), " ligands, ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_receptor_count), " receptors, and ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_target_count), " target genes. The Network_Concentric plot fully captured all unique nodes and edges represented in 2_Internal_Ligand_Receptor_Target.csv, including ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_lr_edge_count), " unique ligand-receptor edges and ", ifelse(is.null(network_coverage_check), "NA", network_coverage_check$expected_rt_edge_count), " unique receptor-target edges, indicating a complex and hierarchically organized internal signaling architecture within the input protein list.\n\n",
-  "## 5. Discussion Text for Manuscript | \n\n",
-  "### \n\n",
-  ", , .  NicheNet  OmniPath , . , , , . , 、,  2_Internal_Ligand_Receptor_Target.csv . \n\n",
-  "### English\n\n",
-  "These findings suggest that plasma proteins may serve not only as circulating biomarkers but also as components of a tightly coupled internal signaling network. By jointly leveraging the NicheNet prior knowledge base and OmniPath functional annotations, we improved the directional interpretability and biological confidence of the inferred interactions. Notably, the current concentric network uses an aggregated display strategy, which is advantageous for highlighting overall architecture and major hubs rather than drawing every ligand-receptor-target triplet as an independent trajectory. Accordingly, this figure is best suited for macro-level presentation of network hierarchy, signaling density, and dominant hubs, whereas row-level evidence should still be reported directly from 2_Internal_Ligand_Receptor_Target.csv.\n\n",
-  "## 6. Coverage Check | \n\n",
-  if (!is.null(network_coverage_check)) {
-    paste0(
-      "- Node-edge coverage complete | : ", ifelse(isTRUE(network_coverage_check$node_edge_coverage_complete), "YES", "NO"), "\n",
-      "- Unique ligands shown | Ligand: ", network_coverage_check$displayed_ligand_count, " / ", network_coverage_check$expected_ligand_count, "\n",
-      "- Unique receptors shown | Receptor: ", network_coverage_check$displayed_receptor_count, " / ", network_coverage_check$expected_receptor_count, "\n",
-      "- Unique targets shown | Target: ", network_coverage_check$displayed_target_count, " / ", network_coverage_check$expected_target_count, "\n",
-      "- Unique L-R edges shown | L-R: ", network_coverage_check$displayed_lr_edge_count, " / ", network_coverage_check$expected_lr_edge_count, "\n",
-      "- Unique R-T edges shown | R-T: ", network_coverage_check$displayed_rt_edge_count, " / ", network_coverage_check$expected_rt_edge_count, "\n",
-      "- Independent row-wise triplets drawn | 507: NO\n"
-    )
-  } else {
-    "- No coverage check available because the internal L-R-T table is empty.\n"
-  },
-  "\n## 7. Output Files | \n\n",
-  "- 1_Internal_Ligand_Receptor.csv\n",
-  "- 2_Internal_Ligand_Receptor_Target.csv\n",
-  "- 3_Internal_LR_Any_Target.csv\n",
-  "- 4_Analysis_Summary_Statistics.csv\n",
-  "- figures/5_Internal_LRT_Network_Concentric.pdf\n",
-  "- figures/5_Internal_LRT_Network_Concentric.png\n"
-)
 
 # readme (Save to readme folder as required)
 README_DIR <- file.path(OUTPUT_DIR, "readme")
 if (!dir.exists(README_DIR)) dir.create(README_DIR, recursive = TRUE)
 readme_file_name <- paste0("NicheNet_Analysis_", TIMESTAMP, "_Readme.txt")
 writeLines(readme_content, file.path(README_DIR, readme_file_name))
-paper_ready_readme_file_name <- paste0("NicheNet_Analysis_", TIMESTAMP, "_README.md")
-writeLines(paper_ready_readme, file.path(README_DIR, paper_ready_readme_file_name))
 
 log_msg("===  (Analysis Completed) ===")
 

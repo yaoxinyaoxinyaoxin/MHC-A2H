@@ -962,7 +962,7 @@ readme_content <- c(
   "Project: Multi-omics and HZ (UKB)",
   "Analysis: Cross-trait Enrichment Analysis Comparison (mvAge, Rheumatoid Arthritis, HZ (UKB))",
   paste0("Date: ", Sys.Date()),
-  "Author: AI Assistant",
+  "Author: Yaoxin",
   "",
   "Description:",
   "This folder contains enrichment analysis results for mvAge, Rheumatoid Arthritis (RA), and HZ (UKB) gene lists.",

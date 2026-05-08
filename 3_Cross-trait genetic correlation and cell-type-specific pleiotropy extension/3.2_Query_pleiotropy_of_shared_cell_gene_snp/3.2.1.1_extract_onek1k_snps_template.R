@@ -17,7 +17,7 @@
 
 # -------------------------------------------------------------------------
 # Script Name: extract_onek1k_snps.R
-# Author: AI Assistant
+# Author: Yaoxin
 # Date: 2026-04-05
 # Version: 1.10
 # Description: 
@@ -722,7 +722,7 @@ readme_content <- glue("
 - **Project**: Multi-omics and Herpes Zoster 
 - **Task**: Extract specific SNP data from OneK1K single-cell eQTL summary statistics and visualize relationships. (OneK1KeQTLSNP)
 - **Date**: {format(Sys.time(), '%Y-%m-%d')}
-- **Author**: AI Assistant
+- **Author**: Yaoxin
 - **Version**: 1.10
 
 ## Execution Details 
