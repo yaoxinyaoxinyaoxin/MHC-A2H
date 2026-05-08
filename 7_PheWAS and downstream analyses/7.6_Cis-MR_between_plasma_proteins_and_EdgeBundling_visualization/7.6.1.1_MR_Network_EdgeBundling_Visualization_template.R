@@ -8,7 +8,7 @@
 # A generalized template to construct and visualize causal networks derived from 
 #       cis-MR results. It employs the Louvain algorithm for community detection 
 #       generates both static high-resolution hierarchical edge bundling plots 
-#       and interactive 3D Plotly-based HTML visualizations.
+#       (Standard) and interactive 3D Plotly-based HTML visualizations.
 #
 # [Data Availability]:
 # Input requires a standard CSV output from TwoSampleMR with FDR correction.
