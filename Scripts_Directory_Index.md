@@ -1,5 +1,7 @@
 # Project Scripts Directory Index
 
+This document provides a comprehensive index of all the analytical scripts within the repository. The directory structure mirrors the methodological workflow described in the manuscript.
+
 ## 1_Local Analysis of [co]Variant Associations (LAVA)
 ### 1.1_LAVA
 - `1.1.1.1_prepare_GWAS_LAVA_inputs_template.py`
@@ -28,8 +30,10 @@
 - `4.1.1.1_calculate_LD_clustering_all_template.R`
 - `4.1.2.1_calculate_LD_and_filter_template.R`
 - `4.1.3.1_batch_single_snp_mr_template.R`
-- `4.1.5.1_visualize_3D_signals_template.R`
+- `4.1.4.1_batch_intersection_3d_prep_template.R`
 - `4.1.4.1_plot_3d_scatter_with_PCA_template.R`
+- `4.1.5.1_visualize_3D_signals_template.R`
+- `4.1.6.1_plot_3d_scatter_with_PCA_template.R`
 
 ## 5_Cross-trait functional and network analyses
 ### 5.1_Cross-trait_GO_and_KEGG_enrichment
@@ -64,14 +68,16 @@
 - `7.4.1.1_visualize_PPI_template.R`
 ### 7.5_NicheNet_analysis_of_candidate_plasma_proteins_P_1e-11
 - `7.5.1.1_nichenet_plasma_proteins_template.R`
+### 7.6_Cis-MR_between_plasma_proteins_and_EdgeBundling_visualization
+- `7.6.1.1_MR_Network_EdgeBundling_Visualization_template.R`
 ### 7.7_Cis-MR_of_plasma_proteins_and_immune_cells
-- `7.6.1.1_cisMR_Analysis_template.R`
+- `7.7.1.1_cisMR_Analysis_template.R`
 ### 7.8_Colocalization_of_plasma_proteins_and_immune_cells
-- `7.6.1.1_GWAS_preprocessing_template.R`
-- `7.9.1.2_pQTL_preprocessing_template.R`
-- `7.9.2.1_susie_coloc_pairwise_template.R`
+- `7.8.1.1_GWAS_preprocessing_template.R`
+- `7.8.1.2_pQTL_preprocessing_template.R`
+- `7.8.2.1_susie_coloc_pairwise_template.R`
 ### 7.9_Cross-trait_cross-cohort_colocalization_and_Manhattan_visual_alignment
-- `7.6.1.1_UKB_GWAS_preprocessing_template.R`
+- `7.9.1.1_UKB_GWAS_preprocessing_template.R`
 - `7.9.1.2_FinnGen_GWAS_preprocessing_template.R`
 - `7.9.2.1_susie_coloc_template.R`
 - `7.9.3.1_plot_manhattan_template.R`
@@ -85,4 +91,3 @@
 ## 9_Genome_build_conversion
 ### 9.1_Genome_build_conversion
 - `9.1.1.1_liftOver_template.R`
-
