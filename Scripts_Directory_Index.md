@@ -33,7 +33,6 @@ This document provides a comprehensive index of all the analytical scripts withi
 - `4.1.4.1_batch_intersection_3d_prep_template.R`
 - `4.1.4.1_plot_3d_scatter_with_PCA_template.R`
 - `4.1.5.1_visualize_3D_signals_template.R`
-- `4.1.6.1_plot_3d_scatter_with_PCA_template.R`
 
 ## 5_Cross-trait functional and network analyses
 ### 5.1_Cross-trait_GO_and_KEGG_enrichment
