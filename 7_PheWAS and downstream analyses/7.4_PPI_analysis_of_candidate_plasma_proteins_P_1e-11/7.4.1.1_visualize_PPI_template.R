@@ -53,13 +53,11 @@ timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 OUTPUT_BASE <- file.path("./", paste0(timestamp, "_PPI_Visualization"))
 OUTPUT_ANALYSIS <- file.path(OUTPUT_BASE, "analysis")
 OUTPUT_LOGS <- file.path(OUTPUT_BASE, "logs")
-OUTPUT_README <- file.path(OUTPUT_BASE, "readme")
 OUTPUT_SCRIPTS <- file.path(OUTPUT_BASE, "scripts")
 
 # Create directories
 if (!dir.exists(OUTPUT_ANALYSIS)) dir.create(OUTPUT_ANALYSIS, recursive = TRUE)
 if (!dir.exists(OUTPUT_LOGS)) dir.create(OUTPUT_LOGS, recursive = TRUE)
-if (!dir.exists(OUTPUT_README)) dir.create(OUTPUT_README, recursive = TRUE)
 if (!dir.exists(OUTPUT_SCRIPTS)) dir.create(OUTPUT_SCRIPTS, recursive = TRUE)
 
 # Set CRAN mirror for stability
@@ -132,7 +130,7 @@ if (length(missing_cols) > 0) {
 }
 
 # Generate column mapping record
-column_mapping_file <- file.path(OUTPUT_README, "column_mapping_record.txt")
+column_mapping_file <- file.path(OUTPUT_LOGS, "column_mapping_record.txt")
 writeLines(paste("Original columns:", paste(colnames(ppi_data), collapse=", ")), column_mapping_file)
 log_message("Column mapping verified and recorded. . ")
 
@@ -207,8 +205,7 @@ log_message(paste0("Identified ", length(unique(V(g)$cluster)), " clusters."))
 threshold_degree <- quantile(V(g)$degree, 0.90)
 V(g)$type <- ifelse(V(g)$degree >= threshold_degree, "Hub", "Non-Hub")
 
-# Save network statistics to readme folder
-# readme
+# Save network statistics
 node_stats <- data.frame(
   Gene = V(g)$name,
   Degree = V(g)$degree,
@@ -229,7 +226,7 @@ if (file.exists(gene_list_file)) {
     rename(Plasma_Protein_Level = direction)
 }
 
-stats_file <- file.path(OUTPUT_README, "network_statistics.csv")
+stats_file <- file.path(OUTPUT_ANALYSIS, "network_statistics.csv")
 write_csv(node_stats, stats_file)
 log_message(paste0("Saved network statistics to: ", stats_file))
 
@@ -535,74 +532,4 @@ log_message(paste0("Plots saved to: ", OUTPUT_ANALYSIS))
 # 6. Wrap up 
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Generate README file
-# README
-readme_file <- file.path(OUTPUT_README, "README_PPI_Visualization.md")
-readme_content <- c(
-  "# PPI Network Visualization Analysis Report / PPI",
-  "",
-  paste("- **Date / :**", Sys.Date),
-  "- **Author / :** Yaoxin",
-  paste("- **Input File / :**", INPUT_FILE),
-  paste("- **Output Directory / :**", OUTPUT_BASE),
-  "",
-  "## Description / ",
-  "This directory contains the results of Protein-Protein Interaction (PPI) network visualization.",
-  "-（PPI）. ",
-  "",
-  "## Directory Structure / ",
-  "- `analysis/`: Contains network plots (PDF/PNG). （PDF/PNG）. ",
-  "- `logs/`: Contains execution logs and session info. . ",
-  "- `readme/`: Contains network statistics, column mappings, and this README file. 、. ",
-  "- `scripts/`: Contains a copy of the script used for this analysis. . ",
-  "",
-  "## Analysis Results / ",
-  "Network plots successfully generated in multiple layouts (Cytoscape Style, Concentric, Edge Bundling).",
-  "（Cytoscape、、）. ",
-  "Network statistics including Degree, Betweenness, and Closeness are saved in `network_statistics.csv`.",
-  "、 `network_statistics.csv` . "
-)
-writeLines(readme_content, readme_file)
-log_message("README file generated. README. ")
-
-# Generate Image Description MD
-# MD
-image_desc_file <- file.path(OUTPUT_README, "Image_Description.md")
-image_desc_content <- c(
-  "# PPI Network Visualizations Description / PPI",
-  "",
-  "-（PPI）. ",
-  "This document describes the three generated visualizations of the Protein-Protein Interaction (PPI) network and their biological and graph-theoretical significance.",
-  "",
-  "## 1. PPI_Network_Cytoscape_Style",
-  "- **Layout :** Fruchterman-Reingold (, ). ",
-  "- **Nodes :** /. (Degree), Hub. ",
-  "- **Colors :** (Cluster). Louvain, . (Modularity), . ",
-  "- **Edges :** . STRING(combined_score), . ",
-  "",
-  "## 2. PPI_Network_Concentric",
-  "- **Layout :** Concentric Circles . ",
-  "- **Nodes :** ** (Betweenness Centrality)**. , “”. ",
-  "- **Colors :** , . ",
-  "- **Size :** (Degree). ",
-  "",
-  "## 3. PPI_Network_EdgeBundling",
-  "- **Layout :** Hierarchical Edge Bundling , . ",
-  "- **Grouping :** LouvainCluster, . ",
-  "- **Edges :** , . Cluster. "
-)
-writeLines(image_desc_content, image_desc_file)
-log_message("Image description MD file generated. MD. ")
-
-# Calculate run time
-end_time <- Sys.time()
-run_time <- round(difftime(end_time, start_time, units = "mins"), 2)
-log_message(paste0("Total Run Time: ", run_time, " mins. : ", run_time, " . "))
-
-log_message("Analysis completed successfully. . ")
-log_message(paste0("Outputs are in: ", OUTPUT_BASE))
-
-# Print session info for reproducibility
-session_info_file <- file.path(OUTPUT_LOGS, "session_info.txt")
-writeLines(capture.output(sessionInfo()), session_info_file)
-log_message(paste0("Session info saved to: ", session_info_file))
+log_message("PPI network visualization completed successfully.")

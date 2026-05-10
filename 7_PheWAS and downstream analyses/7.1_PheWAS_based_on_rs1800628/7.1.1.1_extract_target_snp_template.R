@@ -211,38 +211,8 @@ if (!is.na(current_script) && file.exists(current_script)) {
   file.copy(current_script, file.path(script_out_dir, "extract_TARGET_SNP.R"), overwrite = TRUE)
 }
 
-#  readme  / Generate readme and statistics
-readme_dir <- file.path(out_dir, "readme")
-dir.create(readme_dir, recursive = TRUE, showWarnings = FALSE)
-readme_file <- file.path(readme_dir, paste0("UKB_protein_", target_rsid, "_", timestamp, "_readme.txt"))
-
+# Generate statistics
 end_time <- Sys.time()
 run_time <- round(difftime(end_time, start_time, units = "mins"), 2)
 
-readme_content <- c(
-  "Project: UKB Plasma Protein GWAS extraction for TARGET_SNP",
-  paste0("Date: ", Sys.time()),
-  "Author: Trae",
-  "Description: Extracted data for TARGET_SNP from 3049 UKB plasma protein GWAS summary statistics using fread and subset, with batching and memory cleanup.",
-  paste0("Total GWAS files processed: ", length(gwas_files)),
-  paste0("Total extracted records: ", total_records),
-  paste0("Run time: ", run_time, " mins"),
-  "Output files:",
-  paste0("  - Individual results directory: ", results_dir),
-  if(total_records > 0) paste0("  - Summary file: ", out_file) else "  - Summary file: None",
-  "",
-  "--------------------------------------------------",
-  ": 3049 UKB  GWAS TARGET_SNP ",
-  paste0(": ", Sys.time),
-  ": Trae",
-  ": fread  subset 3049UKBGWASTARGET_SNP, . . ",
-  paste0("GWAS: ", length(gwas_files)),
-  paste0(": ", total_records),
-  paste0(": ", run_time, " "),
-  ": " ,
-  paste0("  - : ", results_dir),
-  if(total_records > 0) paste0("  - : ", out_file) else "  - : "
-)
-
-writeLines(readme_content, readme_file)
 write_log(".  / Analysis task completed.")

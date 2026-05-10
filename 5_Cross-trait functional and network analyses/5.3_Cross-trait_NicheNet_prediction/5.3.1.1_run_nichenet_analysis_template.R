@@ -72,7 +72,7 @@ log_msg <- function(msg) {
   cat(paste(timestamp_log, msg, "\n"), file = LOG_FILE, append = TRUE)
 }
 
-log_msg("Starting NicheNet Analysis Pipeline v3.2 (Upstream & Downstream)")
+log_msg("Starting NicheNet Analysis Pipeline (Upstream & Downstream)")
 log_msg(paste("Input File:", INPUT_FILE))
 log_msg(paste("Cell Mapping File:", CELL_MAPPING_FILE))
 log_msg(paste("Output Directory:", OUTPUT_DIR))

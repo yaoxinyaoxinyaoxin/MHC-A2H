@@ -21,8 +21,6 @@
 # Script Information / 
 # ==============================================================================
 # Script Name: batch_single_snp_mr.R
-# Date: 2026-02-28
-# Version: 1.5
 # Description: 
 #   Performs batch Single-SNP Mendelian Randomization (MR) analysis.
 #   Based on pre-defined Signal Sets (Clusters) with R2 > 0.6.
@@ -136,9 +134,7 @@ output_dir <- file.path(base_output_dir, timestamp)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 dir_logs <- file.path(output_dir, "logs")
-dir_readme <- file.path(output_dir, "readme")
 dir.create(dir_logs, recursive = TRUE, showWarnings = FALSE)
-dir.create(dir_readme, recursive = TRUE, showWarnings = FALSE)
 
 # Logger
 log_file <- file.path(dir_logs, "execution.log")
@@ -527,51 +523,12 @@ if (nrow(results_df) > 0) {
   setnames(summary_agg, "Overall_Status", "Status")
   
   # Write CSV
-  fwrite(summary_agg, file.path(dir_readme, "mr_analysis_summary.csv"))
+  fwrite(summary_agg, file.path(output_dir, "mr_analysis_summary.csv"))
   
   total_processed <- nrow(summary_agg)
 } else {
   total_processed <- 0
-  writeLines("No results generated.", file.path(dir_readme, "mr_analysis_summary.csv"))
+  writeLines("No results generated.", file.path(output_dir, "mr_analysis_summary.csv"))
 }
-
-# Readme
-readme_content <- glue("
-# Single-SNP MR Analysis Summary / SNP MR
-
-## Project Information
-- **Project**: Multi-omics and Herpes Zoster (Single SNP MR)
-- **Date**: {Sys.Date()}
-- **Script**: batch_single_snp_mr.R
-- **Parameters**: LD R2 >= 0.6
-
-## Overview
-This analysis performs Single-SNP Mendelian Randomization for each SNP identified in the LD analysis.
-Analysis is driven by Signal Sets (Clusters) defined in `Exposure_Cluster_Summary.csv`.
-
-## Input Data
-- **Exposure Summary**: {basename(exposure_summary_file)}
-- **SNP Sets Root**: {exposure_root_dir}
-- **Outcomes**:
-  1. Aging (N=1,958,774)
-  2. Rheumatoid Arthritis (N=315,668)
-  3. Herpes Zoster (N=458,440)
-
-## Methodology
-1. **Signal Set Processing**: Iterate through each signal set in the summary file.
-2. **Exposure Loading**: Load corresponding SNP file from `cell/cluster_id.csv`.
-3. **Outcome Selection**: Only run MR for outcomes specified in the summary file for that cluster.
-4. **MR Analysis**: Perform Single SNP MR (`mr_singlesnp`), calculating Wald Ratio.
-5. **Statistics**: Calculate OR and 95% CI.
-
-## Results
-- Results are saved in: `[Cell]/[Cluster_ID]/[Cluster_ID]-[Phenotype].csv`
-
-## Execution Status
-- Total Clusters Processed: {total_processed}
-- See `mr_analysis_summary.csv` for details.
-")
-
-writeLines(readme_content, file.path(dir_readme, "README.md"))
 
 log_msg("Analysis Complete.")

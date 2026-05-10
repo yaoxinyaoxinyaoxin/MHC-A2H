@@ -21,8 +21,6 @@
 # Script Information / 
 # ==============================================================================
 # Script Name: calculate_LD_and_filter.R
-# Date: 2026-02-26
-# Version: 3.1 (Updated input path and R2 threshold confirmation)
 # Description: 
 #   This script calculates LD (R2) for exposure signals (Exposure_Cluster_ID).
 #   It iterates through each signal set, extracts Lead SNPs, and identifies all 
@@ -49,7 +47,6 @@
 #     - {Cell_Type}/
 #       - {Exposure_Cluster_ID}.csv
 #     - logs/
-#     - readme/
 # ==============================================================================
 
 # ==============================================================================
@@ -122,11 +119,9 @@ dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Create Subdirectories / 
 dir_logs <- file.path(output_dir, "logs")
-dir_readme <- file.path(output_dir, "readme")
 dir_temp <- file.path(output_dir, "temp")
 
 dir.create(dir_logs, recursive = TRUE, showWarnings = FALSE)
-dir.create(dir_readme, recursive = TRUE, showWarnings = FALSE)
 dir.create(dir_temp, recursive = TRUE, showWarnings = FALSE)
 
 # Logger Function / 
@@ -137,7 +132,7 @@ log_msg <- function(msg) {
   cat(paste(timestamp_log, msg, "\n"), file = log_file, append = TRUE)
 }
 
-log_msg("Starting LD Calculation Script (v3.0)")
+log_msg("Starting LD Calculation Script")
 log_msg(glue("Output Directory: {output_dir}"))
 log_msg(glue("Using {n_cores} cores for parallel processing"))
 

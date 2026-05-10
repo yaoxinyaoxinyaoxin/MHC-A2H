@@ -317,57 +317,11 @@ if (nrow(all_results) > 0) {
 }
 
 # ==============================================================================
-#  README  (Generate README and statistics info)
+#  (Generate statistics info)
 # ==============================================================================
-dir_readme <- file.path(dir_out, "readme")
-dir.create(dir_readme, showWarnings = FALSE, recursive = TRUE)
 
 end_time <- Sys.time()
 run_time <- difftime(end_time, start_time, units = "mins")
-
-readme_content_en <- paste0(
-  "Project: UKB Plasma Proteins vs HZ (FinnGen) MR Analysis\n",
-  "Date: ", Sys.Date(), "\n",
-  "Time: ", format(Sys.time(), "%H:%M:%S"), "\n",
-  "Output Folder: ", dir_out, "\n\n",
-  "Description:\n",
-  "This directory contains the results of Two-Sample Mendelian Randomization (MR) analysis between 3049 UKB plasma proteins and Herpes Zoster (FinnGen validation dataset).\n\n",
-  "Workflow:\n",
-  "1. Exposures (3049 proteins) were read from previously generated IV CSVs.\n",
-  "2. Outcome data (finngen_R12_AB1_ZOSTER.gz) was read into memory for fast querying.\n",
-  "3. Data harmonization was performed with action=2 to drop ambiguous palindromic SNPs (EAF near 0.5).\n",
-  "4. MR analysis utilized up to 5 methods: Wald ratio, IVW, MR-Egger, Weighted median, Simple/Weighted mode. OR and 95% CIs were calculated.\n",
-  "5. Pleiotropy and Heterogeneity tests were conducted when valid SNPs >= 3.\n",
-  "6. Visualizations (scatter, forest, funnel, LOO) were generated.\n",
-  "7. Multiple testing correction (FDR) was applied to the P-values of primary methods (IVW / Wald ratio).\n\n",
-  "Run Time: ", round(as.numeric(run_time), 2), " minutes.\n",
-  "Total Exposures Processed: ", length(iv_files), "\n"
-)
-
-readme_content_zh <- paste0(
-  ": UKBHZ(FinnGen)MR\n",
-  ": ", Sys.Date, "\n",
-  ": ", format(Sys.time, "%H:%M:%S"), "\n",
-  ": ", dir_out, "\n\n",
-  ":\n",
-  "3049UKB(FinnGen,)(MR). \n\n",
-  ":\n",
-  "1. CSV3049. \n",
-  "2. (finngen_R12_AB1_ZOSTER.gz). \n",
-  "3. action=2, EAF0.5SNP. \n",
-  "4. 5MR(Wald, IVW, MR-Egger, , /), OR95%. \n",
-  "5. SNP>=3. \n",
-  "6. 、、. \n",
-  "7. (IVW / Wald)PFDR. \n\n",
-  ": ", round(as.numeric(run_time), 2), " . \n",
-  ": ", length(iv_files), "\n"
-)
-
-readme_file_en <- file.path(dir_readme, paste0("8__", format(Sys.Date, "%Y%m%d"), "_", format(Sys.time, "%H%M%S"), "_MR_Analysis_README_EN.txt"))
-readme_file_zh <- file.path(dir_readme, paste0("8__", format(Sys.Date, "%Y%m%d"), "_", format(Sys.time, "%H%M%S"), "_MR_Analysis_README_ZH.txt"))
-
-writeLines(readme_content_en, readme_file_en)
-writeLines(readme_content_zh, readme_file_zh)
 
 cat("====================================================\n")
 cat("MR Analysis completed in", round(as.numeric(run_time), 2), "minutes.\n")

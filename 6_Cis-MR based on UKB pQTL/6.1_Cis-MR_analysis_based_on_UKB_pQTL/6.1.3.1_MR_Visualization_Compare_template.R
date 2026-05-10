@@ -63,10 +63,8 @@ dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 
 log_dir <- file.path(output_dir, "logs")
-readme_dir <- file.path(output_dir, "readme")
 plots_dir <- file.path(output_dir, "plots")
 dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
-dir.create(readme_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 
 log_file <- file.path(log_dir, paste0("run_log_", timestamp, ".txt"))
@@ -106,7 +104,7 @@ cat("Significant exposures in HZ:", length(sig_hz), "\n")
 cat("Significant exposures in RA:", length(sig_ra), "\n")
 cat("Intersection exposures:", length(intersect_exp), "\n")
 
-write.csv(data.frame(exposure = intersect_exp), file.path(readme_dir, paste0("Intersection_Exposures_", timestamp, ".csv")), row.names = FALSE)
+write.csv(data.frame(exposure = intersect_exp), file.path(output_dir, paste0("Intersection_Exposures_", timestamp, ".csv")), row.names = FALSE)
 
 # 4.  (NPG : = #E64B35, = #4DBBD5)
 
@@ -189,7 +187,7 @@ plot_intersection_forest <- function(df_hz_primary, df_ra_primary, intersect_exp
   df_int_save <- df_int %>% 
     select(Outcome, exposure, method, nsnp, or, or_lci95, or_uci95, pval, fdr) %>%
     arrange(exposure, desc(Outcome))
-  write_csv(df_int_save, file.path(readme_dir, paste0("Intersection_Proteins_Data_", timestamp, ".csv")))
+  write_csv(df_int_save, file.path(output_dir, paste0("Intersection_Proteins_Data_", timestamp, ".csv")))
   
   # : xmax  xmin , 1
   max_x_limit <- 2.0
@@ -384,39 +382,26 @@ tryCatch({
 })
 
 # 7. 
-cat("Saving statistics and readme...\n")
+cat("Saving statistics...\n")
 stats_info <- paste(
   "=========================================\n",
   "MR Analysis Visualization Compare Statistics\n",
   "=========================================\n",
   "Project: UKB Plasma Protein cis-MR (250kb) HZ vs RA\n",
-  "Analysis Time:", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n",
+  "Time:", Sys.time(), "\n",
   "-----------------------------------------\n",
-  "HZ Significant exposures (FDR <= 0.05):", length(sig_hz), "\n",
-  "RA Significant exposures (FDR <= 0.05):", length(sig_ra), "\n",
+  "Inputs:\n",
+  "HZ Results:", file_hz, "\n",
+  "RA Results:", file_ra, "\n",
+  "-----------------------------------------\n",
+  "Significant exposures in HZ (FDR<0.05):", length(sig_hz), "\n",
+  "Significant exposures in RA (FDR<0.05):", length(sig_ra), "\n",
   "Intersection exposures:", length(intersect_exp), "\n",
   "-----------------------------------------\n",
   "Outputs generated in:", output_dir, "\n",
   "=========================================\n"
 )
-writeLines(stats_info, file.path(readme_dir, paste0("UKB_MR_Vis_Compare_Stats_", timestamp, ".txt")))
-
-readme_content <- paste(
-  "# UKB Plasma Protein cis-MR Compare Visualization README\n\n",
-  "##  (Project Info)\n",
-  "- ** (Project)**: UKB_250kbcisMR (HZ vs RA)\n",
-  "- ** (Time)**: ", format(Sys.time, "%Y-%m-%d %H:%M:%S"), "\n",
-  "##  (Outputs)\n",
-  "1. **plots/**:  (Nature/Lancet ) / Contains all visualizations.\n",
-  "   - `Volcano_Plot_*.pdf/.png`: , . \n",
-  "   - `Forest_Plot_Intersection_Dual.pdf/.png`: , . \n",
-  "   - `Circular_Heatmap_*_vertical.pdf/.png`: （, , ）. \n",
-  "   - `Combined_Heatmap_Volcano.pdf/.png`: （**RA, HZ；, **, , ）. \n",
-  "2. **logs/**:  / Script execution logs.\n",
-  "3. **readme/**:  / Contains stats and intersection list.\n",
-  "   - `Intersection_Proteins_Data_*.csv`: ,  / Intersection data for supplementary files.\n"
-)
-writeLines(readme_content, file.path(readme_dir, paste0("UKB_MR_Vis_Compare_README_", timestamp, ".md")))
+writeLines(stats_info, file.path(output_dir, paste0("UKB_MR_Vis_Compare_Stats_", timestamp, ".txt")))
 
 current_script <- file.path(work_dir, "MR_Visualization_Compare.R")
 if(file.exists(current_script)) {

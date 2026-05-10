@@ -53,14 +53,13 @@ out_dir <- opt$out_dir
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 output_dir <- file.path(out_dir, paste0("Visualization_EdgeBundling_Optimized_", timestamp))
 
-readme_dir <- file.path(output_dir, "readme")
 logs_dir <- file.path(output_dir, "logs")
 data_dir <- file.path(output_dir, "network_data")
 plots_dir <- file.path(output_dir, "plots")
 interactive_dir <- file.path(plots_dir, "3D_Interactive")
 lib_dir <- file.path(interactive_dir, "libs")
 
-invisible(sapply(c(readme_dir, logs_dir, data_dir, plots_dir, interactive_dir, lib_dir), dir.create, recursive = TRUE, showWarnings = FALSE))
+invisible(sapply(c(logs_dir, data_dir, plots_dir, interactive_dir, lib_dir), dir.create, recursive = TRUE, showWarnings = FALSE))
 
 # Logging
 log_file <- file.path(logs_dir, paste0("run_log_", timestamp, ".txt"))
@@ -788,39 +787,6 @@ html_content <- paste0('
 ')
 
 writeLines(html_content, file.path(interactive_dir, "2_Interactive_Network.html"))
-
-# 8. Generate Readme
-# ------------------------------------------------------------------------------
-cat("[INFO] Generating Readme file...\n")
-readme_file <- file.path(readme_dir, paste0("Visualization_EdgeBundling_Optimized_", timestamp, "_Readme.txt"))
-
-readme_content <- paste0(
-  "========================================================================\n",
-  "Project: cis-MR Causal Network & Hierarchical Edge Bundling Visualization\n",
-  "Date: ", Sys.time(), "\n",
-  "========================================================================\n\n",
-  "[Task Description]\n",
-  "Visualization of significant cis-MR results, combining network graphs with \n",
-  "Hierarchical Edge Bundling. Louvain algorithm was used for native clustering.\n",
-  "Interactive 3D plot is optimized to inherit the edge-bundling circular layout and supports full-screen.\n\n",
-  "[Input Data]\n",
-  "MR Results: ", opt$input_csv, "\n",
-  "Clustering: Built-in Louvain Algorithm\n\n",
-  "[Network Characteristics]\n",
-  "Total Proteins (Nodes): ", nrow(nodes), "\n",
-  "Total Causal Relationships (Edges): ", nrow(edges), "\n",
-  "Positive Effects: ", sum(edges$direction == "Positive"), "\n",
-  "Negative Effects: ", sum(edges$direction == "Negative"), "\n\n",
-  "[Output Structure]\n",
-  "1. plots/\n",
-  "   - 1_Hierarchical_EdgeBundling.png/.pdf : Static hierarchical edge bundling plot.\n",
-  "   - 3D_Interactive/2_Interactive_Network.html : Interactive web-based 3D network plot.\n",
-  "2. network_data/\n",
-  "   - Network_Nodes.csv : Node properties (In-degree, Out-degree, Cluster, etc.)\n",
-  "   - Network_Edges.csv : Edge properties\n",
-  "   - Network_Data_Combined.xlsx : Combined Excel table of nodes and edges\n"
-)
-writeLines(readme_content, readme_file)
 
 cat("[INFO] Script finished successfully. Check output directory for results.\n")
 sink()

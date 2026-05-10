@@ -75,13 +75,11 @@ project_name <- "834UKB_TARGET_SNP"
 out_dir <- file.path(work_dir, paste0("Analysis_", project_name, "_", timestamp))
 ind_res_dir <- file.path(out_dir, "results")
 log_dir <- file.path(out_dir, "logs")
-readme_dir <- file.path(out_dir, "readme")
 tmp_dir <- file.path(out_dir, "temp")
 
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 dir.create(ind_res_dir, showWarnings = FALSE, recursive = TRUE)
 dir.create(log_dir, showWarnings = FALSE, recursive = TRUE)
-dir.create(readme_dir, showWarnings = FALSE, recursive = TRUE)
 dir.create(tmp_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Set log file
@@ -236,10 +234,9 @@ if (length(all_results_list) > 0) {
   log_msg("SNP / Target SNP data not found in any files.")
 }
 
-# 7. Readme
-# 7. Generate Readme and statistics
-log_msg(" Readme  / Generating Readme and statistics.")
-readme_file <- file.path(readme_dir, paste0(project_name, "_", Sys.Date(), "_", timestamp, "_readme.txt"))
+# 7. Generate statistics
+log_msg(" / Generating statistics.")
+stats_file <- file.path(log_dir, paste0(project_name, "_", Sys.Date(), "_", timestamp, "_stats.txt"))
 
 end_time <- Sys.time()
 run_time <- difftime(end_time, start_time, units = "mins")
@@ -249,8 +246,8 @@ stats_text <- c(
   " / Data Extraction Summary",
   "==================================================",
   sprintf(" / Project Name: %s", project_name),
-  sprintf(" / Analysis Date: %s", Sys.Date),
-  sprintf(" / Analysis Time: %s", format(Sys.time, "%Y-%m-%d %H:%M:%S")),
+  sprintf(" / Analysis Date: %s", Sys.Date()),
+  sprintf(" / Analysis Time: %s", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
   sprintf("SNP / Target SNP: %s", target_snp),
   sprintf(" / Total files processed: %d", length(gwas_files)),
   sprintf("SNP / Files successfully extracted: %d", length(all_results_list)),
@@ -260,12 +257,11 @@ stats_text <- c(
   " / Directory Structure:",
   "  - results/: SNP / Contains individual SNP extraction results for each phenotype.",
   "  - logs/:  / Execution log files.",
-  "  - readme/:  / Statistics and readme documents.",
   "  - temp/:  / Temporary files (cleared after analysis).",
   "=================================================="
 )
 
-writeLines(stats_text, readme_file)
+writeLines(stats_text, stats_file)
 
 # Delete temporary folder
 log_msg(" / Cleaning up temporary folder.")

@@ -21,8 +21,6 @@
 # Script Information / 
 # ==============================================================================
 # Script Name: calculate_LD_clustering_all.R
-# Date: 2026-02-26
-# Version: 2.15
 # Description: 
 #   This script performs LD-based clustering for Exposure (Cell-specific), Outcome (Phenotype-specific),
 #   and Global (Outcome-agnostic) signals.
@@ -40,19 +38,6 @@
 #      - Logic: Groups all SNPs based purely on genetic correlation (LD).
 #      - ID Format: Global_Cluster_Y
 #   -----------------------------------------------------------------------------------------
-#
-#   Updates (v2.14):
-#     1. Critical Fix in Exposure Cluster Summary:
-#        - Fixed logic to prevent fictitious 'Associations' by removing incorrect Cartesian join.
-#        - Added strict verification step to ensure all 'Associations' exist in source data.
-#     2. Updates (v2.13):
-#        - Added Detailed Cluster Summaries:
-#        - Exposure Side: 'Exposure_Analysis/Exposure_Cluster_Summary.csv'
-#          (Cluster_ID, Cell, Lead_SNPs, Associations, Outcomes).
-#        - Outcome Side: 'Global_SNP_Analysis/Global_Cluster_Summary.csv'
-#          (Cluster_ID, Lead_SNPs, Outcomes) - Includes ALL global signals.
-#     2. Updates (v2.12):
-#        - Sankey Logic Update (Outcome-Anchored) to align with intersection analysis.
 #
 #   Workflow / :
 #     1. Data Loading & Filtering: Load joint Forest Plot data, filter for MHC region (chr6:25-34Mb).
@@ -144,7 +129,7 @@ log_msg <- function(msg) {
   cat(paste(timestamp_log, msg, "\n"), file = log_file, append = TRUE)
 }
 
-log_msg(glue("Starting Analysis Script v2.2. Output directory: {output_dir}"))
+log_msg(glue("Starting Analysis Script. Output directory: {output_dir}"))
 
 # ==============================================================================
 # 1. Data Processing & Filtering / 
@@ -682,13 +667,13 @@ tryCatch({
 })
 
 # ==============================================================================
-# 3.1. Exposure Cluster Summary (Added in v2.13)
+# 3.1. Exposure Cluster Summary
 # ==============================================================================
 # Generate summary CSV for Exposure Analysis
 # Format: Cluster_ID, Lead_SNPs, Associations, Outcomes
 # Sort by: Exposure_Cell
 
-log_msg("--- Generating Exposure Cluster Summary (v2.13) ---")
+log_msg("--- Generating Exposure Cluster Summary ---")
 
 # Define associations locally for this summary (cluster_associations is defined later in script)
 #  (cluster_associations )
@@ -858,14 +843,14 @@ grid.draw(combined_grob)
 dev.off()
 
 # ==============================================================================
-  # 4.3.6. Global Cluster Summary (Added in v2.13)
+  # 4.3.6. Global Cluster Summary
   # ==============================================================================
   # Generate summary CSV for Global SNP Analysis
   # Format: Global_Cluster_ID, Lead_SNPs, Outcomes, N_Outcomes, Aging_Signals, RA_Signals, HZ_Signals, Exposure_Signals, N_Exposure_Signals
   # Sort by: Global_Cluster_ID
   # Includes ALL Global Signals (not just shared ones)
   
-  log_msg("--- Generating Global Cluster Summary (v2.13) ---")
+  log_msg("--- Generating Global Cluster Summary ---")
   
   # 1. Base: Global Clusters (Lead_SNP, Global_Cluster_ID)
   #    Join with dt_clean to get Outcomes (raw)
@@ -994,7 +979,7 @@ generate_signal_mapping <- function(target_outcomes, subfolder_name) {
   current_mapping_dir <- file.path(mapping_base_dir, subfolder_name)
   if (!dir.exists(current_mapping_dir)) dir.create(current_mapping_dir, recursive = TRUE)
   
-  # --- UPDATED LOGIC (v2.12): Outcome-Anchored Filtering ---
+  # --- Outcome-Anchored Filtering ---
   # Goal: Identify Global Clusters that are associated with ALL target outcomes.
   #       Then retrieve ALL Exposure Clusters (Cell-specific) linked to these Global Clusters.
   #       This ensures we capture signals mediated by DIFFERENT cells (e.g. Global_Signal_91).

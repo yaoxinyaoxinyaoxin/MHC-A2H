@@ -151,7 +151,7 @@ fwrite(expression_matrix, output_matrix_file, sep = "\t")
 cat("Saved expression matrix to:", output_matrix_file, "\n\n")
 
 # =========================================================================
-# 3. Process Metadata and Generate README ( README)
+# 3. Process Metadata
 # =========================================================================
 
 cat("Step 2: Processing metadata from series_matrix.txt...\n")
@@ -213,34 +213,10 @@ for (i in seq_along(char_data_list)) {
   }
 }
 
-# Save Metadata/README (/README)
-readme_file <- file.path(output_dir, "GSE242252_Sample_Metadata_README.txt")
-write_tsv(metadata_df, readme_file)
-cat("Saved metadata README to:", readme_file, "\n")
-
-# Create a more human-readable README summary ( README )
-summary_file <- file.path(output_dir, "README_Analysis_Summary.txt")
-sink(summary_file)
-cat("Project: GSE242252 Analysis\n")
-cat("Date:", as.character(Sys.time()), "\n")
-cat("------------------------------------------------\n")
-cat("1. Data Processing:\n")
-cat("   - Raw data merged from", length(raw_files), "files.\n")
-cat("   - Total Genes:", nrow(expression_matrix), "\n")
-cat("   - Total Samples:", ncol(expression_matrix) - 1, "\n")
-cat("   - Output Matrix:", basename(output_matrix_file), "\n\n")
-cat("2. Sample Naming Convention:\n")
-cat("   - GSM_ID: GEO Sample Accession (Unique Identifier)\n")
-cat("   - Sample_Title: Original sample name provided by submitter\n")
-cat("   - Mapping Details are available in:", basename(readme_file), "\n\n")
-cat("3. Sample Groups Overview:\n")
-print(table(metadata_df$disease_state)) # Assuming 'disease state' or similar column exists
-cat("------------------------------------------------\n")
-sink()
-
-# Restore log sink 
-sink() 
-sink(log_file, append = TRUE)
+# Save Metadata
+metadata_file <- file.path(output_dir, "GSE242252_Sample_Metadata.txt")
+write_tsv(metadata_df, metadata_file)
+cat("Saved metadata to:", metadata_file, "\n")
 
 cat("\nStep 2 Completed.\n")
 

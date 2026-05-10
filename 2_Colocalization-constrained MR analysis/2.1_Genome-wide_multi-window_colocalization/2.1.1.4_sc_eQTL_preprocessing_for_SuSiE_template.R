@@ -58,7 +58,6 @@ out_root <- file.path(opt$out_dir, paste0("sc_eQTL_preprocessing_", timestamp))
 dir.create(file.path(out_root, "results"), recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(out_root, "stats"), showWarnings = FALSE)
 dir.create(file.path(out_root, "logs"), showWarnings = FALSE)
-dir.create(file.path(out_root, "readme"), showWarnings = FALSE)
 
 # Initialize logging
 log_file <- file.path(out_root, "logs", "run_log.txt")

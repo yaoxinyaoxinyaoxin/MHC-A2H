@@ -82,11 +82,10 @@ BASE_OUT <- if (!is.null(opt$out_dir)) opt$out_dir else file.path(opt$work_dir, 
 
 DIR_RESULTS <- file.path(BASE_OUT, "results")
 DIR_LOGS <- file.path(BASE_OUT, "logs")
-DIR_README <- file.path(BASE_OUT, "readme")
 DIR_SCRIPTS <- file.path(BASE_OUT, "scripts")
 DIR_TEMP <- file.path(BASE_OUT, "temp")
 
-for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_README, DIR_SCRIPTS, DIR_TEMP)) {
+for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_SCRIPTS, DIR_TEMP)) {
   if (!dir.exists(d)) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
 

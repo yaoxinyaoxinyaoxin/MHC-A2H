@@ -70,30 +70,5 @@ log_message <- function(msg) {
 }
 
 log_message(paste("Starting", "6.1.1.2_extract_snps_by_gene_region.R"))
-\n",
-  "** / Date:** ", Sys.time, "\n\n",
-  "##  / Task Description\n",
-  "UKB, GWAS 250kb  100kb SNP. \n",
-  "Extract SNPs within 250kb and 100kb upstream/downstream regions of UKB plasma protein genes from genome-wide GWAS data.\n\n",
-  "##  / Inputs\n",
-  "-  / Gene Info File: ", info_file, "\n",
-  "-  / Source Data Dir: ", source_dir, "\n\n",
-  "##  / Processing Steps\n",
-  "1.  GCST 、. \n",
-  "2.  GWAS , . \n",
-  "3.  ±250kb  ±100kb . \n",
-  "4. . \n\n",
-  "##  / Statistics\n",
-  "-  / Total tasks: ", nrow(info_dt), "\n",
-  "-  / Successful: ", success_count, "\n",
-  "-  / Failed: ", error_count, "\n\n",
-  "##  / Output Structure\n",
-  "- `250kb_region/`:  250kb  SNP  (.csv)\n",
-  "- `100kb_region/`:  100kb  SNP  (.csv)\n",
-  "- `logs/`: \n",
-  "- `readme/`: \n"
-)
 
-writeLines(readme_content, file.path(readme_dir, paste0("Readme_Summary_", timestamp, ".md")))
-write_log("README . (README generated.)")
-write_log(". (Script finished.)")
+log_message(". (Script finished.)")

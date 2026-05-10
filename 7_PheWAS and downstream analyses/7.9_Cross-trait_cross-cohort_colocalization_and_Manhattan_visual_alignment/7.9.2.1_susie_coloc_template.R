@@ -78,10 +78,9 @@ LIST_PATH <- "./"
 # Create Output Dirs
 DIR_RESULTS <- file.path(BASE_OUT, "results")
 DIR_LOGS <- file.path(BASE_OUT, "logs")
-DIR_README <- file.path(BASE_OUT, "readme")
 DIR_SCRIPTS <- file.path(BASE_OUT, "scripts")
 DIR_TEMP <- file.path(BASE_OUT, "temp")
-for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_README, DIR_SCRIPTS, DIR_TEMP)) {
+for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_SCRIPTS, DIR_TEMP)) {
   dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
 
@@ -137,7 +136,7 @@ unified$Phenotype[unified$Phenotype == "Dermatopolymyositis"] <- "Dermatopolymyo
 unified$Phenotype[unified$ID == "GCST90474052" | grepl("(?i)^systemic lupus erythematosus", unified$Phenotype) | grepl("(?i)^SLE", unified$Phenotype)] <- "SLE"
 log_msg(paste("Total valid datasets after merge:", nrow(unified)))
 
-fwrite(unified, file.path(DIR_README, paste0("Unified_Datasets_List_", timestamp, ".csv")))
+fwrite(unified, file.path(DIR_RESULTS, paste0("Unified_Datasets_List_", timestamp, ".csv")))
 
 ## 4. Generate Pairwise Tasks / 
   # NOTE: Set TEST_MODE to TRUE for test analysis
@@ -174,7 +173,7 @@ task_df <- rbindlist(lapply(tasks, function(t) {
              ID1 = t$ds1$ID, Phenotype1 = t$ds1$Phenotype, Source1 = t$ds1$Source,
              ID2 = t$ds2$ID, Phenotype2 = t$ds2$Phenotype, Source2 = t$ds2$Source)
 }))
-fwrite(task_df, file.path(DIR_README, paste0("Pairwise_Tasks_List_", timestamp, ".csv")))
+fwrite(task_df, file.path(DIR_RESULTS, paste0("Pairwise_Tasks_List_", timestamp, ".csv")))
 
 ## 5. Helper Functions / 
 filter_palindromic <- function(dt, a1_col = "A1", a2_col = "A2") {
@@ -601,37 +600,24 @@ summary_list <- lapply(results_list, function(x) if("summary" %in% names(x)) x$s
 details_list <- lapply(results_list, function(x) if("details" %in% names(x)) x$details else NULL)
 
 final_res <- rbindlist(summary_list, fill = TRUE)
-fwrite(final_res, file.path(DIR_README, paste0("All_Pairwise_Coloc_Summary_", timestamp, ".csv")))
+fwrite(final_res, file.path(DIR_RESULTS, paste0("All_Pairwise_Coloc_Summary_", timestamp, ".csv")))
 
 final_details <- rbindlist(details_list, fill = TRUE)
 if (nrow(final_details) > 0) {
   # reorder columns to put context first
   setcolorder(final_details, c("Task_ID", "ID1", "Phenotype1", "Source1", "ID2", "Phenotype2", "Source2", "Method", "Window"))
-  fwrite(final_details, file.path(DIR_README, paste0("All_Pairwise_Coloc_Details_", timestamp, ".csv")))
+  fwrite(final_details, file.path(DIR_RESULTS, paste0("All_Pairwise_Coloc_Details_", timestamp, ".csv")))
 }
 
 end_time <- Sys.time()
 duration <- round(difftime(end_time, start_time, units = "mins"), 2)
 log_msg(paste("Analysis completed in", duration, "minutes."))
 
-# Write README
-readme_content <- c(
-  "# Pairwise SuSiE Colocalization Analysis Report",
-  paste("Date:", Sys.time()),
-  paste("Target Region:", TARGET_CHR, ":", TARGET_POS, "(", TARGET_SNP, "with windows", paste(WINDOW_SIZES/1000, "kb", collapse=", "), ")"),
-  paste("Total Input Datasets:", n_ds),
-  paste("Total Pairwise Tasks:", length(tasks)),
-  paste("Total Completed Successfully:", sum(final_res$status == "ok", na.rm=TRUE)),
-  paste("Runtime:", duration, "minutes"),
-  "",
-  "## Directories",
-  "- `results/`: Individual coloc details and locuscompare plots for each pair.",
-  "- `logs/`: Execution logs.",
-  "- `readme/`: Unified list and summary CSV.",
-  "- `Detailed_Stats_*/`: Contains statistical summaries based on signal type and phenotype."
-)
-writeLines(readme_content, file.path(DIR_README, "README.md"))
-log_msg("Saved README.md. Done.")
+## Copy script to output
+script_copy <- file.path(DIR_SCRIPTS, paste0("susie_coloc_", timestamp, ".R"))
+file.copy("./", script_copy, overwrite = TRUE)
+
+log_msg("Pipeline completed successfully.")
 
 # ==========================================
 # 9.  (Auto-generate Detailed Stats)

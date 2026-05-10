@@ -57,8 +57,7 @@ def init_output_structure(out_base: Path, clean_name: str) -> dict:
         "root": root,
         "analysis": root / "analysis",
         "logs": root / "logs",
-        "reports": root / "reports",
-        "readme": root / "readme"
+        "reports": root / "reports"
     }
     for d in dirs.values():
         d.mkdir(parents=True, exist_ok=True)

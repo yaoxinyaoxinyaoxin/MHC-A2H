@@ -385,55 +385,11 @@ if (length(all_results_global) > 0) {
 }
 
 # ==============================================================================
-# 6.  README  (Generate README and statistics info)
+# 6.  (Generate statistics info)
 # ==============================================================================
-dir_readme <- file.path(dir_out, "readme")
-dir.create(dir_readme, showWarnings = FALSE, recursive = TRUE)
 
 end_time <- Sys.time()
 run_time <- difftime(end_time, start_time, units = "mins")
-
-readme_content_en <- paste0(
-  "Project: cis-MR Analysis of rs1800628-associated UKB Plasma Proteins vs 731 Immune Cells\n",
-  "Date: ", Sys.Date(), "\n",
-  "Time: ", format(Sys.time(), "%H:%M:%S"), "\n",
-  "Output Folder: ", dir_out, "\n\n",
-  "Description:\n",
-  "This directory contains the results of cis-Mendelian Randomization (MR) analysis between rs1800628-associated UKB plasma proteins (exposures) and 731 immune cell traits (outcomes).\n\n",
-  "Workflow:\n",
-  "1. Exposures were extracted and IVs matched by GCST.\n",
-  "2. Outcome data was loaded in batches, caching in memory to optimize read speed.\n",
-  "3. Data harmonization aligned SNPs via rsid and dropped ambiguous palindromic SNPs (EAF near 0.5).\n",
-  "4. MR analysis used up to 5 methods. Parallel execution used 10 workers.\n",
-  "5. Pleiotropy/Heterogeneity tests and visualizations (scatter, forest, funnel, LOO) were generated.\n",
-  "6. FDR multiple testing correction was applied on primary methods (IVW / Wald ratio).\n\n",
-  "Run Time: ", round(as.numeric(run_time), 2), " minutes.\n",
-  "Total Outcomes Processed: ", length(out_files), "\n"
-)
-
-readme_content_zh <- paste0(
-  ": rs1800628UKB731cis-MR\n",
-  ": ", Sys.Date, "\n",
-  ": ", format(Sys.time, "%H:%M:%S"), "\n",
-  ": ", dir_out, "\n\n",
-  ":\n",
-  "rs1800628UKB731(cis-MR). \n\n",
-  ":\n",
-  "1. GCST. \n",
-  "2. , . \n",
-  "3. rsid, EAF0.5SNP. \n",
-  "4. 5MR, (OR/95% CI). \n",
-  "5. , 、、. \n",
-  "6. (IVW / Wald)PFDR. \n\n",
-  ": ", round(as.numeric(run_time), 2), " . \n",
-  ": ", length(out_files), "\n"
-)
-
-readme_file_en <- file.path(dir_readme, paste0("cisMR_Analysis_README_EN_", timestamp, ".txt"))
-readme_file_zh <- file.path(dir_readme, paste0("cisMR_Analysis_README_ZH_", timestamp, ".txt"))
-
-writeLines(readme_content_en, readme_file_en)
-writeLines(readme_content_zh, readme_file_zh)
 
 cat("====================================================\n")
 cat("MR Analysis completed in", round(as.numeric(run_time), 2), "minutes.\n")

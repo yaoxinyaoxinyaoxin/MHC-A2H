@@ -97,13 +97,11 @@ timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 out_dir <- file.path(base_out_dir, paste0("1_Manhattan_FinnGen_Plots_", timestamp))
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
-# readme
+# log
 log_dir <- file.path(out_dir, "logs")
-readme_dir <- file.path(out_dir, "readme")
 scripts_dir <- file.path(out_dir, "scripts")
 ld_out_dir <- file.path(out_dir, "LD_results")
 dir.create(log_dir, showWarnings = FALSE)
-dir.create(readme_dir, showWarnings = FALSE)
 dir.create(scripts_dir, showWarnings = FALSE)
 dir.create(ld_out_dir, showWarnings = FALSE)
 
@@ -646,57 +644,14 @@ for (res in parallel_results) {
 }
 
 # ------------------------------------------------------------------------------
-# Step 7: Save Statistics, Readme and Finalize
-# : 7: 、
+# Step 7: Save Statistics and Finalize
+# : 7: 
 # ------------------------------------------------------------------------------
 if(length(stats_list) > 0) {
   stats_df <- bind_rows(stats_list)
-  write.csv(stats_df, file.path(readme_dir, paste0("FinnGen_Manhattan_Stats_", timestamp, ".csv")), row.names = FALSE)
+  write.csv(stats_df, file.path(out_dir, paste0("FinnGen_Manhattan_Stats_", timestamp, ".csv")), row.names = FALSE)
   log_msg("Statistics saved.")
 }
-
-readme_text <- sprintf("
-# Project: FinnGen GWAS Manhattan Plots Generation
-# : (FinnGen) GWAS 
-# Date/: %s
-
-## Description / 
-English: 
-This folder contains the results of Manhattan plots generated for FinnGen GWAS datasets.
-The script processes the specified GWAS files, maps the necessary columns (Chromosome, Base Pair Position, P-value, rsid), and generates three types of plots:
-1. Whole Genome Manhattan Plot (Filtered P < 0.05 for efficiency).
-2. MHC Region Manhattan Plot (Chromosome 6: 25Mb - 35Mb).
-3. Specific Region Manhattan Plot (rs1800628 +/- 1Mb, i.e., chr6: 30.54Mb - 32.54Mb).
-Additionally, union SNPs in this specific region were extracted, and LD (R2) with rs1800628 was calculated. The LD results are integrated into all three plots to color the SNPs according to LD intervals.
-Plots are saved in both high-resolution PNG (300 DPI) and PDF formats suitable for publication.
-
-:
- FinnGen GWAS . 
-GWAS, （、、P、rsid）, : 
-1. （ P < 0.05 ）. 
-2. MHC （ 6: 25Mb - 35Mb）. 
-3. （rs1800628  1Mb,  6: 30.54Mb - 32.54Mb）. 
-,  SNP,  rs1800628  LD (R2). LD . 
- PNG (300 DPI)  PDF , . 
-
-## Data Processed / 
-Processed %d files. See the statistics CSV file for detailed SNP counts and minimum P-values per phenotype.
- %d .  SNP  P ,  CSV . 
-
-## Output Structure / 
-- logs/: Contains script execution logs. / . 
-- scripts/: Contains the R script used to generate these results. / R. 
-- readme/: Contains this readme file and statistics CSV. / CSV. 
-- LD_results/: Contains LD calculations text files. / LD. 
-- [Phenotype_Name_GCST]/: Individual folders for each phenotype containing the generated LD-colored plots. / , LD. 
-
-## Execution Time / 
-Completed at: %s
-: %s
-", Sys.Date(), length(stats_list), length(stats_list), format(Sys.time(), "%Y-%m-%d %H:%M:%S"), format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
-
-writeLines(readme_text, file.path(readme_dir, paste0("Readme_Manhattan_", timestamp, ".md")))
-log_msg("Readme generated.")
 
 end_time <- Sys.time()
 run_time <- round(as.numeric(difftime(end_time, start_time, units = "mins")), 2)

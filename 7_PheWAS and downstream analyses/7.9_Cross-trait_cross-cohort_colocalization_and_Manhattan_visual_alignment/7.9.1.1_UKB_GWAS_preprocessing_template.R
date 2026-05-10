@@ -76,12 +76,10 @@ timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 out_dir <- file.path(base_dir, paste0("Preprocessed_SuSiE_", timestamp))
 results_dir <- file.path(out_dir, "results")
 logs_dir <- file.path(out_dir, "logs")
-readme_dir <- file.path(out_dir, "readme")
 
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(results_dir, showWarnings = FALSE)
 dir.create(logs_dir, showWarnings = FALSE)
-dir.create(readme_dir, showWarnings = FALSE)
 
 log_file <- file.path(logs_dir, paste0("run_log_", timestamp, ".txt"))
 log_msg <- function(msg) {
@@ -200,7 +198,7 @@ all_targets <- merge(all_targets, csv_834[, .(`STUDY ACCESSION`, case, control, 
 
 setnames(all_targets, c("case", "control", "total"), c("N_case", "N_control", "N_total"))
 
-input_list_file <- file.path(readme_dir, paste0("Input_Datasets_List_", timestamp, ".csv"))
+input_list_file <- file.path(out_dir, paste0("Input_Datasets_List_", timestamp, ".csv"))
 fwrite(all_targets, input_list_file)
 log_msg(paste("Saved input dataset list to:", input_list_file))
 
@@ -363,45 +361,9 @@ results_list <- parLapply(cl, 1:nrow(all_targets), function(i) {
 stopCluster(cl)
 
 res_dt <- rbindlist(results_list)
-fwrite(res_dt, file.path(readme_dir, paste0("Processing_Summary_", timestamp, ".csv")))
+fwrite(res_dt, file.path(out_dir, paste0("Processing_Summary_", timestamp, ".csv")))
 
 log_msg("Parallel processing completed. Summary:")
 print(res_dt)
-
-# ==============================================================================
-#  Readme
-# ==============================================================================
-readme_text <- sprintf("
-# GWAS Preprocessing for SuSiE/coloc
-# : %s
-
-##  (Description)
- GWAS , （ SuSiE, coloc）. 
-（ LD ）. 
-
-## 
-1.  awk ,  MAF > 0.05 , . 
-2.  RSID  UKB EUR LD . 
-3. : 
-   - Consistent (Source EA == LD A1): Beta  EAF . 
-   - Flipped (Source EA == LD A2): Beta , EAF  (1 - EAF). 
-4.  A1  A2  LD  ld_a1  ld_a2. 
-
-## 
-- : %d
-- : %d
-- : %d
-- : `Processing_Summary_%s.csv`  `Input_Datasets_List_%s.csv`
-
-## 
-- : %s
-- : %s
-", 
-timestamp, 
-nrow(res_dt), sum(res_dt$Status == "Success"), sum(res_dt$Status == "Failed"),
-timestamp, timestamp,
-input_list_file, results_dir)
-
-writeLines(readme_text, file.path(readme_dir, paste0("README_", timestamp, ".md")))
 
 log_msg("Script finished successfully.")

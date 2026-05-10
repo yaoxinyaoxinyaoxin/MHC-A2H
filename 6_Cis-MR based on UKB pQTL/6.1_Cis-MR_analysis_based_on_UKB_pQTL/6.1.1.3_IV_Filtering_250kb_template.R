@@ -59,7 +59,7 @@ BFILE_LOCAL <- opt$bfile_local
 PLINK_BIN <- opt$plink_bin
 FAILED_LIST <- opt$failed_list
 
-dir_create(OUTPUT_DIR)
+dir.create(OUTPUT_DIR, recursive = TRUE, showWarnings = FALSE)
 
 LOG_FILE <- file.path(OUTPUT_DIR, "analysis.log")
 log_message <- function(msg) {
@@ -175,39 +175,14 @@ cat(". \n")
 cat(" - IV: ", num_success, "\n")
 
 # -------------------------------------------------------------------------
-#  README   (Generate README and Statistics)
+#  (Generate Statistics)
 # -------------------------------------------------------------------------
-readme_filename <- sprintf("%s_%s_IV_Filtering_Readme.txt", project_name, timestamp)
 stats_filename <- sprintf("%s_%s_IV_Filtering_Stats.csv", project_name, timestamp)
-
-# README 
-readme_content <- paste0(
-  "============================================================\n",
-  " (IV Filtering Analysis Report - No LD Clumping)\n",
-  "============================================================\n\n",
-  "1.  (Execution Time): ", Sys.time, "\n",
-  "2.  (Script Function): SNP, (P、MAF、F), LD. \n",
-  "3.  (Input Directory): ", source_dir, "\n",
-  "4.  (Output Directory): ", out_dir, "\n\n",
-  "5.  (Filtering Criteria):\n",
-  "   - P-value < ", p_threshold, "\n",
-  "   - MAF > ", maf_threshold, "\n",
-  "   - F-statistic > ", f_threshold, "\n\n",
-  "6.  (Result Statistics):\n",
-  "   -  (Total Files Processed): ", length(files), "\n",
-  "   - IV (Files with Valid IVs): ", num_success, "\n",
-  "   - : LD, P、MAFFSNPs. \n\n",
-  "============================================================\n"
-)
-
-#  README 
-writeLines(readme_content, file.path(readme_dir, readme_filename))
 
 stats_df <- data.frame(
   Metric = c("Total_Files_Processed", "Files_With_Valid_IVs", "P_Value_Threshold", "MAF_Threshold", "F_Statistic_Threshold"),
   Value = c(length(files), num_success, p_threshold, maf_threshold, f_threshold)
 )
-fwrite(stats_df, file.path(readme_dir, stats_filename))
+fwrite(stats_df, file.path(out_dir, stats_filename))
 
 cat(", : ", out_dir, "\n")
-cat("Readme: ", readme_dir, "\n")

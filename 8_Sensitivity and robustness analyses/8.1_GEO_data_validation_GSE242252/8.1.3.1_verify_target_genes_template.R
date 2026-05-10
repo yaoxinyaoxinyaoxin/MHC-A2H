@@ -318,25 +318,4 @@ cat(paste0("Results directory: ", output_dir, "\n"))
 
 sink()
 
-# Create Readme for this analysis
-# Readme
-readme_content <- paste0(
-  "# Gene Expression Verification Analysis / \n\n",
-  "## Date / \n", Sys.Date, "\n\n",
-  "## Description / \n",
-  "This analysis verifies the expression of specific HZ-related genes across three cohorts: Control, Acute HZ, and Resolved 1Y.\n",
-  "HZ（、、1）. \n\n",
-  "## Input / \n",
-  "- Gene List: Gene_List_Single_Outcome_Herpes_Zoster.txt\n",
-  "- Expression Data: Split_Matrix_20260118_190833/\n\n",
-  "## Output / \n",
-  "- Gene_ID_Mapping_Log.xlsx: Mapping between symbols and Ensembl IDs.\n",
-  "- Gene_Verification_Statistics.xlsx: Statistical test results (Wilcoxon/Kruskal).\n",
-  "- Gene_Expression_Boxplots.pdf: Boxplots for each gene.\n",
-  "- logs/: Execution logs.\n\n",
-  "## Methods / \n",
-  "- ID Mapping: EnsDb.Hsapiens.v75\n",
-  "- Statistics: Wilcoxon rank-sum test (pairwise), Kruskal-Wallis test (global).\n"
-)
 
-writeLines(readme_content, file.path(output_dir, "README_Verification.md"))

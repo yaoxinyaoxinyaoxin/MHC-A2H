@@ -2,8 +2,6 @@
 # [Script]: 5.2.1.1_visualize_integrated_PPI_template.R
 # [Description / ]: 
 # Integrates and visualizes Protein-Protein Interaction (PPI) networks from datasets and their unions.
-# [Date / ]: 2026-05-04
-# [Version / ]: 1.0
 # [Usage / ]: 
 #   Rscript 5.2.1.1_visualize_integrated_PPI_template.R \
 #     --file_aging <path> \
@@ -36,9 +34,6 @@
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Script Name: visualize_integrated_PPI.R
-# Author: Yaoxin
-# Date: 2026-02-12
-# Version: 2.0
 # Description: 
 #   This script integrates and visualizes Protein-Protein Interaction (PPI) networks from three datasets (Aging, RA, HZ)
 #   and their unions. It generates a combined figure panel with 7 plots:

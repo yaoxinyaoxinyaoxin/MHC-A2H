@@ -84,11 +84,10 @@ if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
 
-# Create readme folder
-# readme
-readme_dir <- file.path(output_dir, "readme")
-if (!dir.exists(readme_dir)) {
-  dir.create(readme_dir)
+# Create log folder
+log_dir <- file.path(output_dir, "logs")
+if (!dir.exists(log_dir)) {
+  dir.create(log_dir)
 }
 
 cat("Output directory created at:", output_dir, "\n")
@@ -230,7 +229,7 @@ write_output(mat_acute, "GSE242252_Expression_Acute_HZ.txt")
 write_output(mat_1y, "GSE242252_Expression_HZ_Resolved_1Y.txt")
 
 # -----------------------------------------------------------------------------
-# 8. Generate Logs & README
+# 8. Generate Logs
 # -----------------------------------------------------------------------------
 end_time <- Sys.time()
 run_time <- end_time - start_time
@@ -256,7 +255,7 @@ log_content <- c(
 )
 
 # Save Log
-log_file <- file.path(readme_dir, paste0("GSE242252_Analysis_Log_", timestamp, ".txt"))
+log_file <- file.path(log_dir, paste0("GSE242252_Analysis_Log_", timestamp, ".txt"))
 writeLines(log_content, log_file)
 
 # Copy this script to output directory

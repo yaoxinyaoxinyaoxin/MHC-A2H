@@ -97,7 +97,6 @@ dir.create(out_root, recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(out_root, "results"), showWarnings = FALSE)
 dir.create(file.path(out_root, "stats"), showWarnings = FALSE)
 dir.create(file.path(out_root, "logs"), showWarnings = FALSE)
-dir.create(file.path(out_root, "readme"), showWarnings = FALSE)
 dir.create(file.path(out_root, "checkpoints"), showWarnings = FALSE)
 dir.create(file.path(out_root, "scripts"), showWarnings = FALSE)
 dir.create(file.path(out_root, "temp"), showWarnings = FALSE) # LDrsid
@@ -381,42 +380,6 @@ if (length(res_list) > 0) {
 }
 
 unlink(temp_dir, recursive = TRUE)
-
-# 11)  README 
-readme_path <- file.path(out_root, "readme", "README.txt")
-readme_lines <- c(
-  "731 Immune Cell Preprocessing for SuSiE/coloc",
-  "731 (SuSiE/coloc )",
-  "==================================================",
-  paste("Timestamp / :", timestamp),
-  paste("Source Dir / :", src_dir),
-  paste("LD SNP Info / LD:", ld_snp_info),
-  paste("Sample Size File / :", sample_size_file),
-  "",
-  "Description / :",
-  "This pipeline extracts GWAS summary statistics for immune cells and rigidly aligns them to the UKB LD Reference Panel.",
-  "GWAS, UKB LD. ",
-  "",
-  "Alignment Logic (Global Alignment Rule) / :",
-  "1) Consistent : Source_EA == LD_A1 & Source_OA == LD_A2 -> Beta = Beta, EAF = EAF",
-  "2) Flipped : Source_EA == LD_A2 & Source_OA == LD_A1 -> Beta = -Beta, EAF = 1 - EAF",
-  "3) Output : Output_A1 MUST be LD_A1, Output_A2 MUST be LD_A2.",
-  "   (This is critical: since Beta represents the effect of Output_A1, A1 MUST be forced to match the LD reference!)",
-  "   (: BetaLD_A1, A1LD_A1！)",
-  "",
-  "Features / :",
-  "- AWK stream filtering: Filter SNPs by LD rsids dynamically during read to reduce memory usage.",
-  "- Sample size completion: Reads 'STUDY' and 'samplesize' from external CSV and overrides N column.",
-  "- Removed MAF/Position filtering: Retains full genome, intersection defined strictly by LD panel.",
-  "  (AWK；N；MAF/, LD)",
-  "",
-  "Outputs / :",
-  "- results/*.tsv.gz: Aligned output files ready for coloc /  ",
-  "- stats/*: Alignment summaries and mapping traces / ",
-  "- logs/*: Running logs / ",
-  "- checkpoints/*: Checkpoints for resume capability / "
-)
-writeLines(readme_lines, readme_path)
 
 end_time <- Sys.time()
 cat("\nEnd Time / :", as.character(end_time), "\n")

@@ -328,12 +328,10 @@ run_visualization <- function(data_subset, version_name, show_bulk_buttons) {
   plots_static_dir <- file.path(version_dir, "Plots", "Static")
   plots_interactive_dir <- file.path(version_dir, "Plots", "Interactive")
   data_dir <- file.path(version_dir, "Data")
-  readme_dir <- file.path(version_dir, "Readme")
   
   dir.create(plots_static_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(plots_interactive_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(data_dir, recursive = TRUE, showWarnings = FALSE)
-  dir.create(readme_dir, recursive = TRUE, showWarnings = FALSE)
 
   # --- Static Plotting ---
   plot_3d_data <- function(d_sub, suffix = "", title_suffix = "") {
@@ -1341,31 +1339,8 @@ run_visualization <- function(data_subset, version_name, show_bulk_buttons) {
     
   }, error = function(e) { message("Error generating interactive plot: ", e$message) })
 
-  # --- Save Data and Readme ---
+  # --- Save Data ---
   write_csv(data_subset, file.path(data_dir, "merged_intersection_3d_data.csv"))
-  readme_content <- c(
-    "# 3D Scatter Plot Analysis Report / 3D",
-    "",
-    paste("Version:", version_name),
-    paste("Date / :", Sys.Date),
-    paste("Time / :", format(Sys.time, "%H:%M:%S")),
-    "",
-    "## Overview / ",
-    "This analysis visualizes the intersection signals (cell-gene-snp) in a 3D space based on their effect sizes (b values) for Aging, RA, and HZ.",
-    "Aging、RAHZ(b), 3D(cell-gene-snp). ",
-    "",
-    "## Input Data / ",
-    paste("- Total Signals:", nrow(data_subset)),
-    paste("- Unique Cells:", n_distinct(data_subset$cell)),
-    paste("- Unique Genes:", n_distinct(data_subset$gene)),
-    "",
-    "## Statistics / ",
-    "Summary of 'b' values:",
-    "Aging:", summary(data_subset$b_aging),
-    "RA:", summary(data_subset$b_RA),
-    "HZ:", summary(data_subset$b_HZ)
-  )
-  writeLines(as.character(unlist(readme_content)), file.path(readme_dir, "analysis_report.md"))
   
   cat(sprintf("[%s] Visualization for %s completed.\n", Sys.time(), version_name))
 }

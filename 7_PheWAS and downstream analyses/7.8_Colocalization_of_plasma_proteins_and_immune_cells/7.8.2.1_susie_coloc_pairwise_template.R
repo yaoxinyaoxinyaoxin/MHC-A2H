@@ -90,10 +90,9 @@ timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 BASE_OUT <- file.path(WORK_DIR, paste0("susie_coloc_pairwise_", timestamp))
 DIR_RESULTS <- file.path(BASE_OUT, "results")
 DIR_LOGS <- file.path(BASE_OUT, "logs")
-DIR_README <- file.path(BASE_OUT, "readme")
 DIR_SCRIPTS <- file.path(BASE_OUT, "scripts")
 
-for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_README, DIR_SCRIPTS)) {
+for (d in c(BASE_OUT, DIR_RESULTS, DIR_LOGS, DIR_SCRIPTS)) {
   if (!dir.exists(d)) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
 
@@ -579,31 +578,5 @@ write(stat_lines, file = LOG_FILE, append = TRUE)
 ## Copy script to output
 script_copy <- file.path(DIR_SCRIPTS, paste0("susie_coloc_pairwise_pQTL_Immune_", timestamp, ".R"))
 file.copy("./", script_copy, overwrite = TRUE)
-
-## Generate README
-readme_lines <- c(
-  "# Pairwise SuSiE Colocalization Pipeline (hg19) - pQTL vs Immune Cells",
-  "# SuSiE (hg19)",
-  "",
-  paste0("**Created at/**: ", timestamp),
-  "",
-  "## Overview/",
-  "This pipeline performs pairwise colocalization analysis between plasma proteins (eQTL/pQTL) and immune cell phenotypes.",
-  "(pQTL). ",
-  "Tasks are defined by MR results, and analysis is strictly aligned to the LD reference panel.",
-  "MR, LD. ",
-  "",
-  "## Analysis Parameters/",
-  "- Window Size/: +/- 250kb",
-  "- Strong Signal Threshold/: PP.H4 > 0.8",
-  "",
-  "## Output Summary/",
-  "- `summary_coloc_results.csv`: Final status and H4 probabilities for all tasks.",
-  "- `summary_traditional_coloc_global.csv`: Traditional ABF global summary for all tasks.",
-  "- `summary_susie_detailed.csv`: SuSiE colocalization detailed summary.",
-  "- `summary_strong_snps_H4_08.csv`: Extracted strong SNP-level colocalization signals (SNP.PP.H4 > 0.8).",
-  "- Individual task results and locuscompare plots are in the `results/` folder."
-)
-writeLines(readme_lines, file.path(DIR_README, "README.md"))
 
 log_msg("Pipeline completed successfully.")

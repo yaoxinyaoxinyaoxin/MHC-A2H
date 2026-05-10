@@ -54,8 +54,6 @@ OUTPUT_DIR <- opt$out_dir
 
 dir.create(OUTPUT_DIR, recursive = TRUE, showWarnings = FALSE)
 
-})
-
 #  (Resolve global variable binding warnings for lintr)
 invisible(utils::globalVariables(c(
   "Ligand", "Receptor", "Target_Gene", "Regulatory_Potential",
@@ -693,7 +691,7 @@ if (nrow(visualization_source) > 0) {
 }
 
 
-# 5. CSVReadme (Generate Summary CSV and Readme) ------------------
+# 5. Generate Summary CSV ------------------
 log_msg("... (Generating detailed summary statistics CSV...)")
 
 summary_stats <- data.frame(
@@ -702,12 +700,6 @@ summary_stats <- data.frame(
     "Internal Ligand-Receptor pairs found (Prior knowledge)",
     "Internal Ligand-Receptor-Target chains found (All in list)",
     "Internal L-R predicting ANY Target chains found"
-  ),
-  Metric_Cn = c(
-    "",
-    "- ",
-    "(--) ",
-    "- "
   ),
   Value = c(
     count_input_genes,
@@ -721,70 +713,6 @@ summary_stats <- data.frame(
 # CSV
 write_csv(summary_stats, file.path(OUTPUT_DIR, "4_Analysis_Summary_Statistics.csv"))
 log_msg("CSV (Summary statistics CSV generated).")
-
-# Readme
-coverage_summary_text <- if (!is.null(network_coverage_check)) {
-  paste0(
-    "--- Network Coverage Check  ---\n",
-    "Reference file : 2_Internal_Ligand_Receptor_Target.csv\n",
-    "Expected complete L-R-T chains (CSV): ", network_coverage_check$expected_chain_count, "\n",
-    "Displayed ligands / expected ligands (Ligand/CSV): ", network_coverage_check$displayed_ligand_count, " / ", network_coverage_check$expected_ligand_count, "\n",
-    "Displayed receptors / expected receptors (Receptor/CSV): ", network_coverage_check$displayed_receptor_count, " / ", network_coverage_check$expected_receptor_count, "\n",
-    "Displayed targets / expected targets (Target/CSV): ", network_coverage_check$displayed_target_count, " / ", network_coverage_check$expected_target_count, "\n",
-    "Displayed L-R edges / expected L-R edges (L-R/CSVL-R): ", network_coverage_check$displayed_lr_edge_count, " / ", network_coverage_check$expected_lr_edge_count, "\n",
-    "Displayed R-T edges / expected R-T edges (R-T/CSVR-T): ", network_coverage_check$displayed_rt_edge_count, " / ", network_coverage_check$expected_rt_edge_count, "\n",
-    "Node-edge coverage complete : ", ifelse(isTRUE(network_coverage_check$node_edge_coverage_complete), "YES", "NO"), "\n",
-    "Triplets drawn one-by-one (507): NO\n",
-    "Interpretation :  Network_Concentric  CSV  Ligand、Receptor、Target  Ligand-Receptor  Receptor-Target ；,  L-R-T . \n\n"
-  )
-} else {
-  paste0(
-    "--- Network Coverage Check  ---\n",
-    "No coverage check was generated because 2_Internal_Ligand_Receptor_Target.csv is empty.\n\n"
-  )
-}
-
-readme_content <- paste0(
-  "=================================================================\n",
-  "NicheNet Analysis for Plasma Proteins \n",
-  "=================================================================\n\n",
-  "Date : ", format(Sys.time, "%Y-%m-%d %H:%M:%S"), "\n",
-  "Input File : ", INPUT_GENE_FILE, "\n\n",
-  "--- Analysis Description  ---\n",
-  ": \n",
-  "1. : . \n",
-  "2. + (All in list): 、. \n",
-  "3. L-R+ (Any target): -, . \n",
-  "4. : ,  (Network_Concentric), . \n\n",
-  "--- Summary  ---\n",
-  "Total input plasma proteins : ", count_input_genes, "\n",
-  "Internal Ligand-Receptor pairs (-): ", count_internal_lr, "\n",
-  "Internal L-R-T full chains (--, ): ", count_internal_lrt, "\n",
-  "Internal L-R to Any Target chains (-): ", count_internal_lr_any_t, "\n\n",
-  coverage_summary_text,
-  "--- Output Files  ---\n",
-  "1. 1_Internal_Ligand_Receptor.csv: \n",
-  "    (Prior knowledge interaction network).\n",
-  "    (Format): Ligand -> Receptor\n\n",
-  "2. 2_Internal_Ligand_Receptor_Target.csv: \n",
-  "   ,  (Full chain within list).\n",
-  "    (Format): Ligand -> Receptor -> Target Gene (Regulatory_Potential)\n\n",
-  "3. 3_Internal_LR_Any_Target.csv: \n",
-  "   - (Internal L-R -> Any Target).\n",
-  "    (Format): Ligand -> Receptor -> Target Gene (Regulatory_Potential)\n\n",
-  "4. 4_Analysis_Summary_Statistics.csv: \n",
-  "    (Detailed summary statistics).\n\n",
-  "5. figures/5_Internal_LRT_Network_Concentric.pdf / .png: \n",
-  "   Ligand、Receptor、Target,  (Concentric role-layer network for all internal chains).\n\n",
-  "=================================================================\n"
-)
-
-
-# readme (Save to readme folder as required)
-README_DIR <- file.path(OUTPUT_DIR, "readme")
-if (!dir.exists(README_DIR)) dir.create(README_DIR, recursive = TRUE)
-readme_file_name <- paste0("NicheNet_Analysis_", TIMESTAMP, "_Readme.txt")
-writeLines(readme_content, file.path(README_DIR, readme_file_name))
 
 log_msg("===  (Analysis Completed) ===")
 

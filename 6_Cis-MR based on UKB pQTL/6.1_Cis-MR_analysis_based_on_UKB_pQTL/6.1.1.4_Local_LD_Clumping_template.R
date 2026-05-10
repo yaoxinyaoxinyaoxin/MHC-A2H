@@ -79,13 +79,11 @@ base_out_dir <- OUTPUT_DIR
 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 output_dir <- file.path(base_out_dir, paste0("Analysis_Result_", timestamp))
 csv_out_dir <- file.path(output_dir, "csv_results")
-readme_dir <- file.path(output_dir, "readme")
 log_dir <- file.path(output_dir, "logs")
 
 #  (Create directory structure)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(csv_out_dir, recursive = TRUE, showWarnings = FALSE)
-dir.create(readme_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
 
 #  (Configure log output)
@@ -208,13 +206,13 @@ for (i in seq_along(files)) {
 # 8.  (Save summary results and record files)
 if (length(summary_list) > 0) {
   summary_df <- bind_rows(summary_list)
-  summary_file <- file.path(readme_dir, "LD_Clumping_Summary.csv")
+  summary_file <- file.path(output_dir, "LD_Clumping_Summary.csv")
   fwrite(summary_df, summary_file, row.names = FALSE)
   cat(sprintf("\n (Overall summary saved to): %s\n", summary_file))
 }
 
 #  (Save failed records)
-skipped_file_path <- file.path(readme_dir, "Failed_LD_Files_Record.txt")
+skipped_file_path <- file.path(output_dir, "Failed_LD_Files_Record.txt")
 if (length(skipped_ld_files) > 0) {
   writeLines(skipped_ld_files, skipped_file_path)
   cat(sprintf(" %d LD,  (A total of %d files failed LD clumping, records saved to): %s\n", length(skipped_ld_files), length(skipped_ld_files), skipped_file_path))
@@ -222,33 +220,6 @@ if (length(skipped_ld_files) > 0) {
   cat("SNPLDSNP. (All multi-SNP files successfully clumped or none existed.)\n")
   writeLines("No files failed LD clumping.", skipped_file_path)
 }
-
-# 9. README (Generate README file)
-readme_content <- sprintf(
-" (Project Name): LD (Local LD Clumping for Instrumental Variables)
- (Date): %s
- (Output Path): %s
-
-##  (Task Description)
-, LD（PLINK）. 
-Local LD clumping of preliminarily filtered instrumental variables using PLINK.
- (Parameters): clump_kb = %d, clump_r2 = %f, clump_p = %d
-
-##  (Workflow)
-1. CSV (Read all CSV files from source directory).
-2. SNP,  (If only 1 SNP, copy and save directly).
-3. >1SNP, LD (If >1 SNPs, perform local LD clumping).
-4. 3. ,  (Includes 3-retry mechanism. If retries fail, retain original file and record as failed).
-
-##  (Processing Statistics)
--  (Total processed files): %d
-- LD (Number of files failed LD clumping): %d
-", 
-  Sys.time(), output_dir, clump_kb, clump_r2, clump_p, 
-  total_files, length(skipped_ld_files)
-)
-
-writeLines(readme_content, file.path(readme_dir, "README_LD_Clumping.md"))
 
 # 10.  (Record end time and total duration)
 end_time <- Sys.time()

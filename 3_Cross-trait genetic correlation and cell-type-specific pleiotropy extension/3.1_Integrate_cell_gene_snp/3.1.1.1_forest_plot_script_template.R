@@ -16,9 +16,6 @@
 # ==============================================================================
 
 # R script for generating Forest Plot with Table (Hierarchical / )
-# Author: Yaoxin
-# Date: 2026-02-14
-# Version: 4.6
 # Description: 
 #   This script reads multiple CSV files containing MR results from a specified directory.
 #   It standardizes column names and merges data from Bulk and Single-Cell sources.
@@ -26,32 +23,9 @@
 #     - Level 1 (Group): Gene Name
 #     - Level 2 (Subgroup): Cell Type (indented)
 #   It now supports enhanced directory structure, specific outcome pair analysis, single outcome plots, and Gene-Level shared outcome plots.
-#   It also generates comprehensive statistics (including Gene-Cell level), GO/KEGG Enrichment Analysis, and a scientific Readme file.
+#   It also generates comprehensive statistics (including Gene-Cell level), GO/KEGG Enrichment Analysis.
 #   Saves the results as PDF/PNG and copies the script to the output directory.
 #   Note: Beta correction/alignment features have been removed to preserve original directionality.
-#   Update v4.4: 
-#     - Restored SuSiE colocalization columns (Block, 100kb, 50kb, 10kb).
-#     - Ensured ABF colocalization columns are NOT displayed.
-#     - Corrected column indices for plot layout when Exposure info is shown.
-#   Update v4.3: 
-#     - Updated input paths for Main, RA, and Validation data.
-#     - Removed traditional colocalization columns (SuSiE_block, etc.) from all plots.
-#     - Added Exposure information (Alleles, EAF, Beta) to Cell-Gene-SNP three-way intersection plots.
-#   Update v4.5:
-#     - Fixed outcome-name mismatch causing empty intersection outputs.
-#     - Stabilized non-interactive plotting and reduced parallel worker count.
-#   Update v4.6:
-#     - Added an extra output folder for Cell-Gene-SNP intersection (mvAge/RA/HZ).
-#     - Added pair-specific Spearman plots (Positive/Negative subsets) and combined layouts.
-#
-#   MRCSV. 
-#   Bulk. 
-#   : 
-#     - 1: 
-#     - 2: 
-#   、、. 
-#   （-）、GO/KEGGReadme. 
-#   PDF/PNG, . 
 
 # Steps / :
 #   1. Load required libraries 
@@ -66,7 +40,7 @@
 #   10. Generate Specific Outcome Pairs (Same Cell + Same SNP) 
 #   11. Generate Statistics (Statistics on Genes, SNPs, and Overlaps) 
 #   12. Perform Enrichment Analysis 
-#   13. Generate Readme (Readme)
+#   13. Generate log
 #   14. Save outputs and backup the script 
 
 # Load required libraries / 
@@ -140,10 +114,9 @@ dir_added_cell_gene_snp <- file.path(output_dir, "8_Added_Cell_Gene_SNP_Forest_C
 dir_validation <- file.path(output_dir, "Validation_Analysis") 
 dir_logs <- file.path(output_dir, "Logs")
 dir_scripts <- file.path(output_dir, "Scripts")
-dir_readme <- file.path(output_dir, "Readme")
 
 # Create directories / 
-for (d in c(dir_single_outcome, dir_joint_outcome, dir_gene_shared, dir_cell_gene_shared, dir_cell_gene_snp_shared, dir_statistics, dir_enrichment, dir_added_cell_gene_snp, dir_validation, dir_logs, dir_scripts, dir_readme)) {
+for (d in c(dir_single_outcome, dir_joint_outcome, dir_gene_shared, dir_cell_gene_shared, dir_cell_gene_snp_shared, dir_statistics, dir_enrichment, dir_added_cell_gene_snp, dir_validation, dir_logs, dir_scripts)) {
   if (!dir.exists(d)) dir.create(d, recursive = TRUE)
 }
 
@@ -1942,7 +1915,7 @@ tryCatch({
   p_counts <- ggplot(stats_counts_long, aes(x = outcome, y = Count, fill = Type)) +
     geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.5) +
     geom_text(aes(label = Count), position = position_dodge(width = 0.9), vjust = -0.5, size = 3, fontface = "bold") +
-    theme_classic(base_size = 14) + # Standard style theme
+    theme_classic(base_size = 14) + # Journal style theme
     labs(x = NULL, y = "Count") + # Remove Title and X-axis label (Outcome)
     scale_y_continuous(expand = expansion(mult = c(0, 0.1))) + # Reduce gap at bottom
     theme(
@@ -2241,9 +2214,9 @@ for (combo in combinations_list) {
 }
 
 # ==============================================================================
-# 12. Generate Scientific Readme / Readme
+# 12. Generate Scientific log
 # ==============================================================================
-cat("\nGenerating Scientific Readme...\n")
+cat("\nGenerating Scientific log...\n")
 
 # Prepare Interpretation Variables
 n_mvAge_genes <- stats_counts$N_Genes[stats_counts$outcome == "mvAge"]
@@ -2260,57 +2233,6 @@ mvAge_hz_ra_shared_genes <- intersect(
   data$gene_name[data$outcome == "RA"]
 )
 n_mvAge_hz_ra_shared <- length(mvAge_hz_ra_shared_genes)
-
-readme_content <- paste0(
-"# Analysis Report: Multi-Omics MR Analysis of mvAge, Herpes Zoster, and Rheumatoid Arthritis
-# : 、
-
-## 1. Overview / 
-This analysis integrates GWAS summary statistics from bulk and single-cell eQTL/pQTL data to investigate the causal relationships between molecular traits (gene expression/protein levels) and three outcomes: **mvAge**, **Herpes Zoster**, and **Rheumatoid Arthritis**.
-BulkeQTL/pQTLGWAS, （/）: ** (mvAge)**、** (Herpes Zoster)**  ** (Rheumatoid Arthritis)**. 
-
-## 2. Statistical Summary / 
-### 2.1 Outcome-Specific Associations / 
-- **mvAge**: Associated with ", n_mvAge_genes, " unique genes.
-- **Herpes Zoster**: Associated with ", n_hz_genes, " unique genes.
-- **Rheumatoid Arthritis**: Associated with ", n_ra_genes, " unique genes.
-
-### 2.2 Shared Mechanisms / 
-- **3-Way Intersection (mvAge vs. HZ vs. RA)**:
-  - Found ", n_mvAge_hz_ra_shared, " shared genes potentially influencing all three phenotypes.
-  -  ", n_mvAge_hz_ra_shared, " , . 
-  - Shared Genes List (Top 10): ", paste(head(mvAge_hz_ra_shared_genes, 10), collapse = ", "), " ...
-
-## 3. Scientific Interpretation / 
-The presence of shared genetic drivers across mvAge, Herpes Zoster (infectious susceptibility), and Rheumatoid Arthritis (autoimmunity) highlights the complex interplay between immunosenescence, viral immunity, and autoimmune regulation.
-、, 、. 
-
-### 3.1 Potential Biological Pathways / 
-(See Enrichment Analysis results for detailed pathways.)
-（. ）
-
-## 4. Methodology / 
-- **MR Method**: Two-sample MR using colocalized SNPs as instruments.
-- **Data Source**: Integrated bulk and single-cell QTLs.
-- **Visualization**: Hierarchical forest plots.
-- **Enrichment Analysis**: GO and KEGG enrichment.
-
-## 5. Files Description / 
-- `1_Single_Outcome`: Forest plots for each outcome individually.
-- `2_Joint_Outcome`: Joint plots (if applicable).
-- `3_Intersection_Gene`: Gene-level shared outcome plots.
-- `4_Intersection_Cell_Gene`: Cell-Gene level shared plots (Pairwise and 3-Way).
-- `5_Intersection_Cell_Gene_SNP`: Cell-Gene-SNP level shared plots (Pairwise and 3-Way).
-- `6_Statistics`: CSV files containing counts, overlap statistics, and Venn diagrams.
-- `7_Enrichment_Analysis`: GO and KEGG enrichment results.
-- `Validation_Analysis`: Validation analysis.
-
----
-*Report generated automatically by ForestPlot_Analysis script v4.2 on ", timestamp, "*
-")
-
-writeLines(readme_content, file.path(dir_readme, "README_Analysis_Report.md"))
-cat("Readme generated successfully.\n")
 
 # ==============================================================================
 # 14. Validation Analysis / 

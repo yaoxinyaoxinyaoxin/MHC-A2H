@@ -76,11 +76,6 @@ dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 log_dir <- file.path(output_dir, "logs")
 dir.create(log_dir, recursive = TRUE, showWarnings = FALSE)
 
-# readme
-# Readme directory
-readme_dir <- file.path(output_dir, "readme")
-dir.create(readme_dir, recursive = TRUE, showWarnings = FALSE)
-
 # Script directory
 script_dir <- file.path(output_dir, "scripts")
 dir.create(script_dir, recursive = TRUE, showWarnings = FALSE)
@@ -173,39 +168,6 @@ cat("Total extracted records:", total_extracted_records, "\n")
 cat("End time:", format(end_time, "%Y-%m-%d %H:%M:%S"), "\n")
 cat("Run time:", run_time, "\n")
 cat("========================================\n")
-
-# readme
-# Generate readme file
-readme_content_cn <- paste0(
-  "# : ", project_name, "\n",
-  "# : ", format(Sys.time, "%Y-%m-%d"), "\n",
-  "# :  OneK1K  ", target_rsid, "  eQTL ,  P . \n",
-  "# : ", input_dir, "\n",
-  "# : ", output_dir, "\n",
-  "# :\n",
-  "  - : ", total_files, "\n",
-  "  - : ", processed_files, "\n",
-  "  - : ", failed_files, "\n",
-  "  - : ", total_extracted_records, "\n",
-  "# : ", round(as.numeric(run_time, units = "mins"), 2), " \n"
-)
-
-readme_content_en <- paste0(
-  "# Project Name: ", project_name, "\n",
-  "# Date: ", format(Sys.time(), "%Y-%m-%d"), "\n",
-  "# Description: Serially extract eQTL results for ", target_rsid, " from OneK1K dataset, deduplicate and sort by P-value ascending.\n",
-  "# Input directory: ", input_dir, "\n",
-  "# Output directory: ", output_dir, "\n",
-  "# Statistics:\n",
-  "  - Total files processed: ", total_files, "\n",
-  "  - Successfully processed: ", processed_files, "\n",
-  "  - Failed processing: ", failed_files, "\n",
-  "  - Total extracted records: ", total_extracted_records, "\n",
-  "# Run time: ", round(as.numeric(run_time, units = "mins"), 2), " mins\n"
-)
-
-readme_file <- file.path(readme_dir, paste0(project_name, "_", timestamp, "_readme.md"))
-writeLines(c("###  (Chinese Version) ###", readme_content_cn, "\n", "###  (English Version) ###", readme_content_en), readme_file)
 
 # Restore standard output
 sink()

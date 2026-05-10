@@ -17,32 +17,9 @@
 
 # -------------------------------------------------------------------------
 # Script Name: extract_onek1k_snps.R
-# Author: Yaoxin
-# Date: 2026-04-05
-# Version: 1.10
 # Description: 
 #   Extracts SNP data from OneK1K single-cell eQTL summary statistics based on 
 #   a provided list of cell types and lead SNPs.
-#   Updated to include output filtered by FDR <= 0.05 and a deduplicated version
-#   keeping only the best P-value per Cell-SNP-Gene combination.
-#   v1.3: Added visualization (Sankey diagram) for Cell-SNP to Gene relationships.
-#   v1.4: Switched input to Negative correlation set and updated output directory.
-#   v1.5: Switched input to Shared Summary set, updated output directory, optimized plot spacing.
-#   v1.6: Added 3-way intersection (Aging, RA, HZ) output version (CSV & Plot).
-#   v1.7: Added separate plots for 3-way intersection: All FDR and FDR <= 0.05.
-#   v1.8: Refactored 3-way intersection analysis to follow the full pipeline (Raw -> FDR Filter -> Unique Best -> Plots).
-#   v1.9: Corrected 3-way intersection extraction logic to use Cell-SNP matching (instead of Cell-SNP-Gene) to capture all associated genes (including Novel).
-#   v1.10: Modified X-axis title to "Gene" for all plots, and adjusted legend/title font sizes for DotPlot_Cell_SNP_Gene_3way_Intersection_FDR_0.05.
-#   OneK1KeQTLlead SNPSNP. 
-#   : FDR <= 0.05, （Cell-SNP-GeneP）. 
-#   v1.3: Cell-SNPGene. 
-#   v1.4: , . 
-#   v1.5: , , . 
-#   v1.6: （Aging, RA, HZ）（CSV）. 
-#   v1.7: : All FDR  FDR <= 0.05. 
-#   v1.8: , （Raw -> FDR ->  -> ）. 
-#   v1.9: , Cell-SNP（Cell-SNP-Gene）, （Novel）. 
-#   v1.10: "Gene", DotPlot_Cell_SNP_Gene_3way_Intersection_FDR_0.05. 
 #
 # Usage: 
 #   Rscript extract_onek1k_snps.R
@@ -72,7 +49,7 @@
 #   - Extracted SNP data filtered by FDR <= 0.05 (CSV). FDR <= 0.05SNP. 
 #   - Unique Best P-value data (CSV). P. 
 #   - Plots (PDF/PNG) showing Cell-SNP to Gene relationships. Cell-SNPGene. 
-#   - README and Statistics. README. 
+#   - Statistics.
 # -------------------------------------------------------------------------
 
 # 1. Load Libraries and Set Options ---------------------------------------
@@ -158,7 +135,7 @@ log_message <- function(message) {
 
 # 4. Main Execution -------------------------------------------------------
 
-log_message("Starting OneK1K SNP extraction script (v1.10)...")
+log_message("Starting OneK1K SNP extraction script...")
 log_message(paste("Input CSV:", input_csv_path))
 log_message(paste("Source Data Directory:", source_data_dir))
 log_message(paste("Output Directory:", output_dir))
@@ -710,89 +687,6 @@ if (length(stats_list) > 0) {
 
 end_time <- Sys.time()
 run_time <- end_time - start_time
-
-# 6. Generate README ------------------------------------------------------
-# README
-
-readme_content <- glue("
-# OneK1K SNP Extraction README
-# OneK1K SNP
-
-## Project Info
-- **Project**: Multi-omics and Herpes Zoster 
-- **Task**: Extract specific SNP data from OneK1K single-cell eQTL summary statistics and visualize relationships. (OneK1KeQTLSNP)
-- **Date**: {format(Sys.time(), '%Y-%m-%d')}
-- **Author**: Yaoxin
-- **Version**: 1.10
-
-## Execution Details 
-- **Input File**: {basename(input_csv_path)}
-- **Source Data Path**: {source_data_dir}
-- **Output Directory**: {basename(output_dir)}
-- **Run Time**: {round(run_time, 2)} {units(run_time)}
-
-## Statistics 
-- **Total Cell Types Processed**: {length(unique_cells)}
-- **Total SNPs Requested**: {nrow(targets)}
-- **Total SNPs Extracted**: {if(exists('final_result')) nrow(final_result) else 0}
-- **SNPs with FDR <= 0.05**: {if(exists('fdr_filtered_result')) nrow(fdr_filtered_result) else 0}
-- **Unique Best P-value Entries**: {if(exists('unique_best_result')) nrow(unique_best_result) else 0}
-
-## File Descriptions 
-1. **OneK1K_extracted_snps.csv**: 
-   - The main output file containing extracted SNP statistics.
-   - SNP. 
-2. **OneK1K_extracted_snps_FDR_0.05.csv**:
-   - Extracted SNP statistics filtered for FDR <= 0.05.
-   - FDR <= 0.05SNP. 
-3. **OneK1K_extracted_snps_FDR_0.05_Unique_Best.csv**:
-   - Filtered data (FDR <= 0.05) with duplicates removed. For each Cell-SNP-Gene combination, only the entry with the lowest P-value is retained.
-   - FDR（<= 0.05）. Cell-SNP-Gene, P. 
-4. **plots/Sankey_Cell_SNP_Gene_Optimized.pdf (.png)**:
-   - Optimized Sankey diagram visualization showing the relationship between Cell-SNP (Left) and Genes (Right).
-   - , Cell-SNP. 
-   - Width of flow represents the magnitude of Beta; Color represents direction (Red=Positive, Blue=Negative).
-   - Beta；（=, =）. 
-5. **plots/DotPlot_Cell_SNP_Gene_Enhanced.pdf (.png)**:
-   - Enhanced Dot Plot showing the association landscape.
-   - , . 
-   - X-axis: Gene (Ordered by Genomic Position); Y-axis: Cell-SNP.
-   - X: ；Y: -SNP. 
-   - Point Shape represents Outcome Intersection; Point Color represents Beta value.
-   - ；Beta. 
-6. **extraction_statistics.csv**: 
-   - Summary of extraction status per cell type.
-   - . 
-7. **missing_snps.csv**: 
-   - List of SNPs that were requested but not found in the source files (if any).
-   - SNP. 
-8. **logs/extraction_log.txt**: 
-   - Detailed execution log.
-   - . 
-
-## Methodology 
-1. Filtered input CSV to exclude bulk data and summary rows.
-   CSVbulk. 
-2. Identified unique Cell Type - SNP pairs.
-   -SNP. 
-3. Iterated through each cell type, loaded the full summary statistics, and filtered by RSID.
-   , , RSID. 
-4. Merged results into a single file.
-   . 
-5. Filtered the merged results for FDR <= 0.05 and saved as a separate file.
-   （FDR <= 0.05）. 
-6. Deduplicated the FDR filtered results by keeping only the row with the lowest P-value for each Cell-SNP-Gene combination.
-   FDR, Cell-SNP-GeneP. 
-7. Visualized the Cell-SNP-Gene relationships using a Sankey diagram (ggalluvial), highlighting effect size and direction.
-   （ggalluvial）Cell-SNP-Gene, . 
-
-## Environment 
-- R version: {R.version.string}
-- Packages: data.table, dplyr, stringr, fs, readr, ggplot2, ggalluvial
-")
-
-writeLines(readme_content, file.path(output_dir, "README.md"))
-log_message("Generated README.md")
 
 log_message("Script completed successfully.")
 log_message(paste("Total Run Time:", round(run_time, 2), units(run_time)))

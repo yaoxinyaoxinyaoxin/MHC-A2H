@@ -957,48 +957,6 @@ supp_file_path <- file.path(output_dir, "Supplementary_Table_Enrichment_Results.
 saveWorkbook(wb_supp, supp_file_path, overwrite = TRUE)
 cat(paste("Saved Supplementary Table to:", supp_file_path, "\n"))
 
-# Create Readme
-readme_content <- c(
-  "Project: Multi-omics and HZ (UKB)",
-  "Analysis: Cross-trait Enrichment Analysis Comparison (mvAge, Rheumatoid Arthritis, HZ (UKB))",
-  paste0("Date: ", Sys.Date()),
-  "Author: Yaoxin",
-  "",
-  "Description:",
-  "This folder contains enrichment analysis results for mvAge, Rheumatoid Arthritis (RA), and HZ (UKB) gene lists.",
-  "1. Enrichment_Results_mvAge.xlsx: Detailed GO/KEGG results for mvAge.",
-  "2. Enrichment_Results_RA.xlsx: Detailed GO/KEGG results for RA.",
-  "3. Enrichment_Results_HZ_UKB.xlsx: Detailed GO/KEGG results for HZ (UKB).",
-  "4. Summary_GeneLists_and_Enrichment.xlsx: Combined file with gene lists and results.",
-  "5. Combined_Enrichment_Plot_Optimized.pdf/png: 4x4 grid visualization (Bubble Plots Only - Standard Layout).",
-  "6. Combined_Enrichment_Plot_Swapped.pdf/png: 4x4 grid visualization (Bubble Plots Only - Swapped Layout).",
-  "7. Combined_Enrichment_Network_Composite.pdf/png: Standard Layout (Bubble + Network Plots).",
-  "8. Combined_Enrichment_Network_Composite_Swapped.pdf/png: Swapped Layout (Bubble + Network Plots).",
-  "9. Network_*.pdf/png: Individual Enrichment network plots using aPEAR.",
-  "",
-  "Visualization Layout (Standard):",
-  "Row 1: mvAge (Labels on Left)",
-  "Row 2: Rheumatoid Arthritis (Labels on Left)",
-  "Row 3: HZ (UKB) (Labels on Left)",
-  "Row 4: Comparison (Labels on Left)",
-  "Columns: GO BP, GO CC, GO MF, KEGG (Labels at Bottom)",
-  "",
-  "Visualization Layout (Swapped):",
-  "Columns: mvAge, Rheumatoid Arthritis, HZ (UKB), Comparison (Labels at Top)",
-  "Rows: GO BP, GO CC, GO MF, KEGG (Labels on Left)",
-  "",
-  "Visualization Interpretation (Comparison - Venn Diagrams):",
-  "The Venn diagrams in the last row illustrate the intersection of significant enrichment results between mvAge, RA, and HZ (UKB).",
-  "- Overlapping areas indicate shared biological mechanisms.",
-  "",
-  "Methods:",
-  "Enrichment analysis performed using clusterProfiler (R).",
-  "Significance cutoff: p.adjust < 0.05 (BH correction).",
-  "Comparison metric: Intersection of significant terms."
-)
-
-writeLines(readme_content, file.path(output_dir, "README.txt"))
-
 # -------------------------------------------------------------------------
 # 6. Finalize / 
 # -------------------------------------------------------------------------

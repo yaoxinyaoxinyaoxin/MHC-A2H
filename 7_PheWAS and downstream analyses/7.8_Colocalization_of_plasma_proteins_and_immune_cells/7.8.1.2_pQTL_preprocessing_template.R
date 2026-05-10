@@ -89,7 +89,6 @@ dir.create(out_root, recursive = TRUE, showWarnings = FALSE)
 dir.create(file.path(out_root, "results"), showWarnings = FALSE)
 dir.create(file.path(out_root, "stats"), showWarnings = FALSE)
 dir.create(file.path(out_root, "logs"), showWarnings = FALSE)
-dir.create(file.path(out_root, "readme"), showWarnings = FALSE)
 dir.create(file.path(out_root, "checkpoints"), showWarnings = FALSE)
 dir.create(file.path(out_root, "tmp"), showWarnings = FALSE)
 dir.create(file.path(out_root, "scripts"), showWarnings = FALSE)
@@ -414,27 +413,6 @@ if (length(dup_files) > 0) {
   all_dups <- lapply(dup_files, data.table::fread)
   data.table::fwrite(data.table::rbindlist(all_dups, fill=TRUE), file.path(out_root, "stats", "all_duplicate_snps.csv"))
 }
-
-# 11) README
-readme_path <- file.path(out_root, "readme", "README.txt")
-readme_lines <- c(
-  "UKB pQTL Preprocessing for SuSiE/coloc (Genome-wide)",
-  "UKBpQTL SuSiE/coloc ",
-  "",
-  paste("Timestamp:", timestamp),
-  paste("Source Dir:", pQTL_src_dir),
-  paste("LD Panel:", ld_snp_info),
-  paste("CSV Input:", csv_input),
-  "",
-  "Structure: results/<FILE_NAME>.tsv.gz",
-  ": results/<FILE_NAME>.tsv.gz",
-  "",
-  "Columns: snp, chr, pos, A1, A2, beta, se, pval, eaf, N",
-  ": snp, chr, pos, A1, A2, beta, se, pval, eaf, N",
-  "Logic: Filtered by LD panel using system awk -> Align alleles (flip beta/eaf if A1/A2 swapped, strictly using LD A1/A2) -> Filter by MAF > 0.01 -> Check duplicates (record but do not remove)",
-  ": awkLD -> （betaeaf, LDA1/A2） -> MAF > 0.01 -> SNP"
-)
-writeLines(readme_lines, readme_path)
 
 # 12) 
 end_time <- Sys.time()
