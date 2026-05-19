@@ -1,10 +1,9 @@
-# Code Availability for: "A shared MHC immunogenetic signal links aging, rheumatoid arthritis, and herpes zoster through high inflammatory burden–compensatory immune tolerance dysregulation"
-
+# Code Availability for: "A shared MHC immunogenetic signal connects aging, rheumatoid arthritis, and herpes zoster through chronic high inflammatory burden–compensatory immune tolerance dysregulation"
 This repository contains the complete, standardized analytical pipeline utilized to generate the results presented in this study. By integrating large-scale genome-wide association studies (GWAS) of a multivariate aging latent factor (mvAge), rheumatoid arthritis (RA), and herpes zoster (HZ) with multi-omics quantitative trait loci (including bulk eQTLs, single-cell eQTLs, and plasma pQTLs), this framework dissects the shared genetic and molecular architecture linking aging, autoimmunity, and viral reactivation.
 
 ## Overview of Methodology
 
-The analytical pipeline is designed to overcome the extreme linkage disequilibrium (LD) and complex haplotype structures inherent to the major histocompatibility complex (MHC). It sequentially translates macroscopic phenotypic associations into specific molecular and cellular regulatory networks, providing a mechanistic foundation for the proposed life-course "high inflammatory burden–compensatory immune tolerance dysregulation" model:
+The analytical pipeline is designed to overcome the extreme linkage disequilibrium (LD) and complex haplotype structures inherent to the major histocompatibility complex (MHC). It sequentially translates macroscopic phenotypic associations into specific molecular and cellular regulatory networks, providing a mechanistic foundation for the proposed life-course "chronic high inflammatory burden–compensatory immune tolerance dysregulation" model:
 
 1. **LAVA (Local Analysis of [co]Variant Associations):** Maps local genetic correlations to demonstrate non-random regional aggregation of shared genetic effects across the extended MHC region among mvAge, RA, and HZ.
 2. **SuSiE & Colocalization:** Employs an LD-aware colocalization framework, integrating Sum of Single Effects (SuSiE) fine-mapping across dynamic genomic windows, to resolve complex LD and map shared pleiotropic signals.
